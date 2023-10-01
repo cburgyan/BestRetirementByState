@@ -1,39 +1,75 @@
 
-  {% include "header.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Retirement Home Maps</title>
+    
+    <!-- Include Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12 jumbotron text-center">
-        <h1>Retirement Home Quality, Staffing, and Surrounding Area Maps</h1>
-        <p>Use the interactive maps below to explore the dataset</p>
-      </div>
-    </div>
-    <div class="well">
-      <h3>Interactive Leaflet Map/s </h3>
-      
-      <div class="well">
-        <h4>Retirement Home Quality, Staffing, Location, Weather, CDC data, etc.:</h4>
-        <select id="selDataset" onchange="optionChanged(this.value)"></select>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2">
-      <div class="col-md-5">
-        <div id="bar"></div>
-      </div>
-      <div class="col-md-5">
-        <div id="gauge"></div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div id="bubble"></div>
-      </div>
-    </div>
-  </div>
-  <script type="text/javascript" src="{{ url_for('static', filename='kmbMaps.js') }}"></script>
+    <!-- This is the basic code feel free to add more styless  -->
 
+</head>
+<body>
+    <!-- is this the header you were talking about karoly.   -->
+    {% include "header.html" %}
+   
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center" style="font-size: 16px"></div>
+                <h1>Retirement Home Quality, Staffing, and Surrounding Area Maps</h1>
+                <p>Use the interactive maps below to explore the dataset</p>
+            </div>
+        </div>
+        <h4>Retirement Home Quality, Staffing, Location:</h4>
+        <select id="state-filter">
+            <option value="">Show All States</option>
+        </select>
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Filter by Rating:</h4>
+                <select id="rating-filter">
+                    <option value="">Show All Ratings</option>
+                    <option value="1.0">1.0</option>
+                    <option value="2.0">2.0</option>
+                    <option value="3.0">3.0</option>
+                    <option value="4.0">4.0</option>
+                    <option value="5.0">5.0</option>
+                    <!-- Add other rating options -->
+                </select>
+            </div>
+        </div>
 
+        <!-- <div class="well">
+            <h3>Interactive Leaflet Map/s</h3> -->
+            <div id="map-id" style="height: 480px;"></div> 
+
+           <!-- <div class="well">
+                <h4>Retirement Home Quality, Staffing, Location:</h4>
+                <select id="selDataset" onchange="optionChanged(this.value)"></select> -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="col-md-5">
+                    <div id="bar"></div>
+                </div>
+                <div class="col-md-5">
+                    <div id="gauge"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="bubble"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Leaflet JavaScript and your custom JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
-
 </html>
