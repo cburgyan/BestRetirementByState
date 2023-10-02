@@ -1,41 +1,143 @@
 
-  {% include "header.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-  <div class="container">
+<head>
+    <title>Retirement Home Dashboard</title>
+</head>
+
+<body>
+
+{% include "header.html" %}
+
+<div class="container">
     <div class="row">
-      <div class="col-md-12 jumbotron text-center">
-        <h1>Retirement Home Quality, Staffing, and Surrounding Area Overview</h1>
-        <p>Use the interactive charts below to explore the dataset</p>
-      </div>
+        <div class="col-md-12 jumbotron text-center mb-4">
+            <h1>Retirement Home Quality, Staffing, and Surrounding Area Overview</h1>
+            <p>Use the interactive charts below to explore the dataset</p>
+        </div>
     </div>
-    <div class="well">
-      <h3>General Stats Overview: </h3>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="well">
+                <h3>General Stats Overview: </h3>
+            </div>
+        </div>
     </div>
-    <div class="row">
-      <div class="col-md-2">
-      <div class="col-md-5">
-        <div id="bar"></div>
+
+    <div class="row mb-4">
+      <div class="col-md-6">
+          <h4>Bar Chart:</h4>
+          <div id="bar"></div> 
       </div>
-      <div class="col-md-5">
-        <div id="gauge"></div>
+      <div class="col-md-6">
+          <h4>Gauge Chart:</h4>
+          <div id="gauge"></div> 
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div id="bubble"></div>
-      </div>
-    </div>
   </div>
-<!-- The div that holds our map -->
-<div id="map"></div>
 
-<!-- Leaflet JS -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h4>Bubble Chart:</h4>
+            <div id="bubble"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Retirement Home Locations:</h4>
+            <div id="map" style="height: 480px;"></div> 
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Libraries -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-  crossorigin=""></script>
-<!-- D3 JavaScript -->
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<!-- Our JavaScript -->
-</body>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
+<script>
+  var bubbleData = [{
+    x: ['Home A', 'Home B', 'Home C'],
+    y: [5, 7, 9],
+    mode: 'markers',
+    marker: {
+        size: [20, 60, 100],
+        color: ['red', 'green', 'blue']
+    }
+}];
+
+var bubbleLayout = {
+    title: 'Bubble Chart for Homes',
+    showlegend: false,
+};
+
+Plotly.newPlot('bubble', bubbleData, bubbleLayout);
+
+// Map for retirement home locations
+var mapData = [{
+    type: 'scattermapbox',
+    mode: 'markers',
+    lon: [-75.1652, -73.9489, -74.8068],
+    lat: [39.9526, 40.7128, 41.1262],
+    marker: {
+        size: 10,
+        color: 'red'
+    },
+    text: ['Home A', 'Home B', 'Home C']
+}];
+
+var mapLayout = {
+    mapbox: {
+        style: 'open-street-map',
+        zoom: 4,
+        center: {
+            lon: -75,
+            lat: 40
+        }
+    }
+};
+
+Plotly.newPlot('map', mapData, mapLayout, {responsive: true});
+
+  var data = [{
+      x: ['Quality', 'Staffing', 'Area'],
+      y: [5, 7, 9],
+      type: 'bar'
+  }];
+
+  var layout = {
+      title: 'Retirement Home Metrics',
+      barmode: 'group'
+  };
+
+  Plotly.newPlot('bar', data, layout);
+
+  var gaugeData = [{
+      type: "indicator",
+      mode: "gauge+number",
+      value: 67, // Replace this with your actual value
+      title: { text: "Staffing Quality" },
+      gauge: {
+          axis: { range: [null, 100] },
+          steps: [
+              { range: [0, 25], color: "red" },
+              { range: [25, 50], color: "yellow" },
+              { range: [50, 75], color: "lightgreen" },
+              { range: [75, 100], color: "green" }
+          ]
+      }
+  }];
+
+  var gaugeLayout = { width: 400, height: 300, margin: { t: 0, b: 0 } };
+  Plotly.newPlot('gauge', gaugeData, gaugeLayout);
+</script>
+
+
+</body>
 </html>

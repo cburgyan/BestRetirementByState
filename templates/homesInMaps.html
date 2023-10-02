@@ -5,60 +5,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Retirement Home Maps</title>
-    
     <!-- Include Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-
-    <!-- This is the basic code feel free to add more styless  -->
-
+    <!-- General Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <!-- is this the header you were talking about karoly.   -->
+    <!-- Navigation Bar or Header -->
     {% include "header.html" %}
    
     <div class="container">
         <div class="row">
-            <div class="col-md-12 text-center" style="font-size: 16px"></div>
+            <div class="col-md-12 text-center">
                 <h1>Retirement Home Quality, Staffing, and Surrounding Area Maps</h1>
                 <p>Use the interactive maps below to explore the dataset</p>
             </div>
         </div>
-        <h4>Retirement Home Quality, Staffing, Location:</h4>
-        <select id="state-filter">
-            <option value="">Show All States</option>
-        </select>
         <div class="row">
+            <div class="col-md-4">
+                <h4>Filter by State:</h4>
+                <select id="state-filter">
+                    <option value="">Show All States</option>
+                    <!-- Dynamically populate states here -->
+                </select>
+            </div>
             <div class="col-md-4">
                 <h4>Filter by Rating:</h4>
                 <select id="rating-filter">
                     <option value="">Show All Ratings</option>
+                    <!-- Possible Ratings -->
                     <option value="1.0">1.0</option>
                     <option value="2.0">2.0</option>
                     <option value="3.0">3.0</option>
                     <option value="4.0">4.0</option>
                     <option value="5.0">5.0</option>
-                    <!-- Add other rating options -->
                 </select>
             </div>
         </div>
-
-        <!-- <div class="well">
-            <h3>Interactive Leaflet Map/s</h3> -->
-            <div id="map-id" style="height: 480px;"></div> 
-
-           <!-- <div class="well">
-                <h4>Retirement Home Quality, Staffing, Location:</h4>
-                <select id="selDataset" onchange="optionChanged(this.value)"></select> -->
-            </div>
-        </div>
+        <!-- Leaflet Map Container -->
         <div class="row">
-            <div class="col-md-2">
-                <div class="col-md-5">
-                    <div id="bar"></div>
-                </div>
-                <div class="col-md-5">
-                    <div id="gauge"></div>
-                </div>
+            <div id="map-id" style="height: 480px;"></div> 
+        </div>
+        
+        <!-- Charts Container -->
+        <div class="row">
+            <div class="col-md-6">
+                <div id="bar"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="gauge"></div>
             </div>
         </div>
         <div class="row">
