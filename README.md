@@ -73,6 +73,7 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
     <li>
         <strong>Inspect The .csv Files And Create The Schema And Entity-Relationship Diagram:</strong><br>
         Inspecting the .csv files led to the synthesis of the following schema:<br><br> 
+        <br>
                 Business_Table
                 - 
                 index INT(10)
