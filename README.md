@@ -59,7 +59,7 @@ Create a story with three views.<br>
 
 
 ## Creating the DataFrames:
-ETL for creating the 'business', 'performance',  and 'zipcode' DataFrames began by reading in raw data from .xlsx files into a general DataFrame.
+ETL for creating the 'business', 'performance',  and 'zipcode' DataFrames began by reading in raw data from .xlsx files into a general DataFrame and manipulating it using pandas in jupyter notebook.
 <ol style='list-style-type: upper-roman;'>
     <li>
         Inspecting the data via the number of rows/columns, list of all columns present and their associated data types, and investigating any non-values if present.
@@ -82,7 +82,7 @@ ETL for creating the 'business', 'performance',  and 'zipcode' DataFrames began 
         Exporting the newly created DataFrames into CSV and JSON files for future use.
     </li>
 
-## Creating A Database From The New .CSV Data Files:
+## Creating A Database From The New CSV Data Files:
 
 To create a database, the CSV files were examined and an Entity-Relationship Diagram was synthesized which led to a schema. Database tables were constructed in Postgresql and, finally, these tables were populated with the data from the CSV files.
 <ol style='list-style-type: upper-roman;'>
