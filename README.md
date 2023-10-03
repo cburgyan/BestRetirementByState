@@ -125,9 +125,14 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
         <br>
         <br>
         <br>
-        <img src="./Database_Files/QuickDBD-crowdfunding.png" />
+        <img src="./SQL_documents/QuickDBD-BestRetirement.png" />
     </li>
     <br>
+    <li>
+        <strong>Construct Database Tables:</strong><br>
+        The following postgresql code was run in pgAdmin4:<br><br>
+        <img src="./SQL_documents/BestRetirement_db_table_setup.sql" />
+    </li>
 
 
 
