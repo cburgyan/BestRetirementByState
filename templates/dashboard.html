@@ -1,41 +1,47 @@
 % include "header.html" %}
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-12 jumbotron text-center mb-3">
-      <h1>Retirement Home Quality, Staffing, and Surrounding Area Dashboard</h1>
-      <p>Use the interactive charts below to explore the dataset</p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-2">
-      <div class="well">
-        <h5>Retirement Home Name:</h5>
-        <!-- Add a placeholder and style for better visibility -->
-        <select id="selDataset" onchange="optionChanged(this.value)" class="form-control">
-            <option value="" disabled selected>Select a retirement home</option>
-        </select>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 jumbotron text-center">
+        <h1>Retirement Home Quality, Staffing, and Surrounding Area Dashboard</h1>
+        <p>Use the interactive charts below to explore the dataset</p>
       </div>
-      <div class="panel panel-primary mt-3">
-        <div class="panel-heading">
-          <h3 class="panel-title">Quick and General Info</h3>
+    </div>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <div class="row">
+      <div class="col-md-2">
+        <div class="well">
+          <h5>Retirement Home Name:</h5>
+          <!-- <select id="selDataset" onchange="optionChanged(this.value)"></select> -->
+          <select id="stateDropdown"></select>
+
+            <!-- Add other rating options dynamically using JavaScript -->
+          </select>
         </div>
-        <div id="sample-metadata" class="panel-body"></div>
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Quick and General Info</h3>
+          </div>
+          <div id="sample-metadata" class="panel-body"></div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div id="bar"></div>
+      </div>
+      <div class="col-md-5">
+        <div id="gauge"></div>
       </div>
     </div>
-    <div class="col-md-5 mt-3">
-      <div id="bar"></div>
-    </div>
-    <div class="col-md-5 mt-3">
-      <div id="gauge"></div>
-    </div>
-  </div>
-  <div class="row mt-3">
-    <div class="col-md-12">
-      <div id="bubble"></div>
+    <div class="row">
+      <div class="col-md-12">
+        <div id="bubble"></div>
+      </div>
     </div>
   </div>
-</div>
+
+  <script type="text/javascript" src="{{ url_for('static', filename='TLDashboard.js') }}"></script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='snbDashboard.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='mppDashboard.js') }}"></script>

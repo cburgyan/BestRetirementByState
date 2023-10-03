@@ -4,6 +4,11 @@ app = Flask(__name__)
 
 # Define a route to serve the GeoJSON file
 # if go the route it will automatically download the geojson file
+@app.route('/dashboardjson')
+def dashboardjson():
+    geojson_filename = 'static/DatasetManipulations/mapping.json'
+    return send_file(geojson_filename)
+
 @app.route('/geojson')
 def geojson():
     geojson_filename = 'static/DatasetManipulations/map_5rating.geojson'
