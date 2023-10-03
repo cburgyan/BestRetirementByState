@@ -75,7 +75,7 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
         Inspecting the .csv files led to the synthesis of the following schema:<br><br> 
         
             Business_Table
-            - 
+            --
             index INT(10)
             federal_provider_number INT(20) PK 
             provider_name VARCHAR(225)
@@ -94,9 +94,10 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
             longitude NUMERIC(6,6)
             adjusted_total_nurse_staffing_hours_per_resident_per_day NUMERIC(2,6)
             performance_id INT(20) FK >-< Performance_Table.performance_id
+
             
             Performance_Table
-            -
+            --
             index INT(10)
             most_recent_health_inspection_more_than_2_years_ago VARCHAR(5)
             overall_rating INT(1)
@@ -111,12 +112,14 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
             number_of_payment_denials INT(5)
             total_number_of_penalties INT(5)
             performance_id INT(20) PK
+
                                 
             Zipcode_Table
-            - 
+            --
             index INT(10)
             provider_state VARCHAR(2)
             provider_zip_code INT(5) PK
+            
 <br>
         which in turn led to the following ERD built in <a href="https://www.quickdatabasediagrams.com/">QuickDatabaseDiagrams.com</a>:
         <br>
