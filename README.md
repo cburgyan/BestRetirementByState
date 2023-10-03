@@ -1,6 +1,11 @@
 # Project 3: Best Retirement By State
 
 ## Collaborators
+Karoly Burgyan<br>
+Thanh Le Dinh<br>
+Shayla Badeaux<br>
+Maria Paula Parra<br>
+Christian Cantur<br>
 
 ---
 ## Sources
