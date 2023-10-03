@@ -10,8 +10,8 @@ Christian Cantu<br>
 ---
 ## Sources 
 <ol>
-    <li>Jinja (with Flask). n.d. https://palletsprojects.com/p/jinja/</li>
     <li>Nursing Home Quality and Staffing Database. https://www.kaggle.com/datasets/thedevastator/nursing-home-quality-staffing</li>
+    <li>Jinja (with Flask). n.d. https://palletsprojects.com/p/jinja/</li>
     <li>Stack Overflow - Where Developers Learn, Share, & Build Careers. (n.d.). Stack Overflow. https://stackoverflow.com/</li>
     <li>Plotly https://plotly.com/javascript/</li>
     <li>Chart.js https://www.chartjs.org/docs/latest/</li>
@@ -43,8 +43,19 @@ For Project 3, you will work with your group to tell a story using data visualiz
 </li>
 For this project, you can focus your efforts within a specific industry: Finance, Healthcare, Custom.<br>
 
-## Project Question 
+## Project Question/Goals
 What are the best places to retire in each state?<br>
+Create a story with three views.<br>
+<li>
+    An overview:
+</li>
+<li>
+    An interactive dashboard:
+</li>
+<li>
+    An interactive map to explore the dataset by using filters for location and overall rating.
+</li>
+
 
 ## Creating the DataFrames:
 ETL for creating the 'business', 'performance',  and 'zipcode' DataFrames began by reading in raw data from .xlsx files into a general DataFrame.
