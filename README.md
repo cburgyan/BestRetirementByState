@@ -94,7 +94,6 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
                 longitude NUMERIC(6,6)
                 adjusted_total_nurse_staffing_hours_per_resident_per_day NUMERIC(2,6)
                 performance_id INT(20) FK >-< Performance_Table.performance_id
-
                 
                 Performance_Table
                 -
@@ -111,14 +110,13 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
                 total_amount_of_fines_in_dollars NUMERIC(10,2)
                 number_of_payment_denials INT(5)
                 total_number_of_penalties INT(5)
-                performance_id INT(20) PK
-                
+                performance_id INT(20) PK                
                 
                 Zipcode_Table
                 - 
                 index INT(10)
                 provider_state VARCHAR(2)
                 provider_zip_code INT(5) PK
-<br>
+        <br>
 
 
