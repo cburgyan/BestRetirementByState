@@ -94,6 +94,7 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
                 longitude NUMERIC(6,6)
                 adjusted_total_nurse_staffing_hours_per_resident_per_day NUMERIC(2,6)
                 performance_id INT(20) FK >-< Performance_Table.performance_id
+
                 
                 Performance_Table
                 -
