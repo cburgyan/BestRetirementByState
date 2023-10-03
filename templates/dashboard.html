@@ -7,11 +7,18 @@
         <p>Use the interactive charts below to explore the dataset</p>
       </div>
     </div>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
     <div class="row">
       <div class="col-md-2">
         <div class="well">
           <h5>Retirement Home Name:</h5>
-          <select id="selDataset" onchange="optionChanged(this.value)"></select>
+          <!-- <select id="selDataset" onchange="optionChanged(this.value)"></select> -->
+          <select id="stateDropdown"></select>
+
+            <!-- Add other rating options dynamically using JavaScript -->
+          </select>
         </div>
         <div class="panel panel-primary">
           <div class="panel-heading">
@@ -33,11 +40,8 @@
       </div>
     </div>
   </div>
-  <script type="text/javascript" src="{{ url_for('static', filename='snbDashboard.js') }}"></script>
-  
-  
 
-  <script type="text/javascript" src="{{ url_for('static', filename='mppDashboard.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='TLDashboard.js') }}"></script>
 
 </body>
 
