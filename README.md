@@ -72,5 +72,5 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
 <ol style='list-style-type: upper-roman;'>
     <li>
         <strong>Inspect The .csv Files And Create The Schema And Entity-Relationship Diagram:</strong><br>
-        Inspecting the .csv files led to the synthesis of the following schema:<br><br>
+        Inspecting the .csv files led to the synthesis of the following schema:<br><br> 
             
