@@ -59,7 +59,8 @@ Create a story with three views.<br>
 
 
 ## Creating the DataFrames:
-ETL for creating the 'business', 'performance',  and 'zipcode' DataFrames began by reading in raw data from .xlsx files into a general DataFrame and manipulating it using pandas in jupyter notebook.
+We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.
+
 <ol style='list-style-type: upper-roman;'>
     <li>
         Inspecting the data via the number of rows/columns, list of all columns present and their associated data types, and investigating any non-values if present.
