@@ -55,13 +55,29 @@
 </div>
 
 <!-- JavaScript Libraries -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <script>
+    // Load the CSV data and then generate the charts.
+    d3.csv('Property-Taxes_by_State.csv').then(function(data) {
+        // Extract the needed data from the CSV
+        var states = data.map(d => d.State);
+        var medianRates = data.map(d => +d['Median Effective Property Tax Rate']);  // Convert string to number using +
+
+        // Bar chart based on CSV data
+        var barData = {
+            x: states,
+            y: medianRates,
+            type: 'bar'
+        };
+
+        var barLayout = {
+            title: 'Median Property Tax Rate by State',
+        };
+
+        Plotly.newPlot('bar', [barData], barLayout);
+
   var bubbleData = [{
     x: ['Home A', 'Home B', 'Home C'],
     y: [5, 7, 9],
