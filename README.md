@@ -41,6 +41,7 @@ For Project 3, you will work with your group to tell a story using data visualiz
 <li>
     Your final visualization should ideally include at least three views.
 </li>
+
 For this project, you can focus your efforts within a specific industry: Finance, Healthcare, Custom.<br>
 
 ## Project Question/Goals
