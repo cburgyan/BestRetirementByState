@@ -12,6 +12,10 @@ Christian Cantu<br>
 <ol>
     <li>Jinja (with Flask). n.d. https://palletsprojects.com/p/jinja/</li>
     <li>Nursing Home Quality and Staffing Database. https://www.kaggle.com/datasets/thedevastator/nursing-home-quality-staffing</li>
+    <li>Stack Overflow - Where Developers Learn, Share, & Build Careers. (n.d.). Stack Overflow. https://stackoverflow.com/</li>
+    <li>Plotly https://plotly.com/javascript/</li>
+    <li>Chart.js https://www.chartjs.org/docs/latest/</li>
+    <li>Leaftlet https://leafletjs.com/</li>
 </ol>
 
 ---
