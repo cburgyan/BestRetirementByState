@@ -1,3 +1,4 @@
+{% include "header.html" %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,21 +13,13 @@
     <!-- This is the basic code feel free to add more styless  -->
 
 </head>
-<body>
-    <!-- is this the header you were talking about karoly.   -->
-    {% include "header.html" %}
-   
+<body>   
     <div class="container">
         <div class="row">
-            <div class="col-md-12 text-center" style="font-size: 16px"></div>
-                <h1>Retirement Home Quality, Staffing, and Surrounding Area Maps</h1>
-                <p>Use the interactive maps below to explore the dataset</p>
+            <div class="col-md-12 text-center">
+                <h1>Come Home To Exceptional Senior Living.</h1>
             </div>
         </div>
-        <h4>Retirement Home Quality, Staffing, Location:</h4>
-        <select id="state-filter">
-            <option value="">Show All States</option>
-        </select>
         <div class="row">
             <div class="col-md-4">
                 <h4>Filter by Rating:</h4>
@@ -37,18 +30,19 @@
                     <option value="3.0">3.0</option>
                     <option value="4.0">4.0</option>
                     <option value="5.0">5.0</option>
-                    <!-- Add other rating options -->
+                </select>
+            </div>
+            <div class="col-md-4">
+                <h4>Location:</h4>
+                <select id="state-filter">
+                    <option value="">Show All States</option>
                 </select>
             </div>
         </div>
-
-        <!-- <div class="well">
-            <h3>Interactive Leaflet Map/s</h3> -->
-            <div id="map-id" style="height: 480px;"></div> 
-
-           <!-- <div class="well">
-                <h4>Retirement Home Quality, Staffing, Location:</h4>
-                <select id="selDataset" onchange="optionChanged(this.value)"></select> -->
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <!-- Center the map -->
+                <div id="map-id" style="height: 420px;"></div>
             </div>
         </div>
         <div class="row">
@@ -70,6 +64,6 @@
 
     <!-- Include Leaflet JavaScript and your custom JavaScript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='app.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='interactive_maps.js') }}"></script>
 </body>
 </html>
