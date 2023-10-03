@@ -16,7 +16,7 @@ Christian Cantu<br>
 
 ---
 ## Project Outline
-For Project 3, you will work with your group to tell a story using data visualizations. Here are the specific requirements:<br>
+For Project 3, you will work with your group to tell a story using data visualizations. Here are the specific requirements:
 <li>
     Your visualization must include a Python Flask-powered API, HTML/CSS, JavaScript, and at least one database (SQL, MongoDB, SQLite, etc.).<br>
 <li>
@@ -62,7 +62,73 @@ ETL for creating the 'business', 'performance',  and 'zipcode' DataFrames began 
     <li>
         Creating the three separate DataFrames from the newly cleaned DataFrame.
     </li>
-    
+    <li>
+        Exporting the newly created DataFrames into CSV and JSON files for future use.
+    </li>
+
+## Creating A Database From The New .CSV Data Files:
+
+To create a database, the CSV files were examined and an Entity-Relationship Diagram was synthesized which led to a schema. Database tables were constructed in Postgresql and, finally, these tables were populated with the data from the CSV files.
+<ol style='list-style-type: upper-roman;'>
+    <li>
+        <strong>Inspect The .csv Files And Create The Schema And Entity-Relationship Diagram:</strong><br>
+        Inspecting the .csv files led to the synthesis of the following schema:<br><br>
+            Business_Table
+            - 
+            index INT(10)
+            federal_provider_number INT(20) PK 
+            provider_name VARCHAR(225)
+            provider_city VARCHAR(30)
+            provider_zip_code INT(5) FK >- Zipcode_Table.provider_zip_code
+            provider_county_name VARCHAR(30)
+            ownership_type VARCHAR(30)
+            number_of_certified_beds INT(3)
+            number_of_residents_in_certified_beds INT(3)
+            provider_type VARCHAR(30)
+            provider_resides_in_hopsital VARCHAR(5)
+            automatic_sprinkler_systems_in_all_required_areas VARCHAR(3)
+            location VARCHAR(225)
+            processing_data DATE
+            latitude NUMERIC(6,6)
+            longitude NUMERIC(6,6)
+            adjusted_total_nurse_staffing_hours_per_resident_per_day NUMERIC(2,6)
+            performance_id INT(20) FK >-< Performance_Table.performance_id
+
+Performance_Table
+-
+index INT(10)
+most_recent_health_inspection_more_than_2_years_ago VARCHAR(5)
+overall_rating INT(1)
+health_inspection_rating INT(1)
+staffing_rating INT(1)
+RN_staffing_rating INT(1)
+total_weighted_health_survey_score NUMERIC(6,6)
+number_of_facility_reported_incidents INT(5)
+number_of_substantial_complaints INT(5)
+number_of_fines INT(5)
+total_amount_of_fines_in_dollars NUMERIC(10,2)
+number_of_payment_denials INT(5)
+total_number_of_penalties INT(5)
+performance_id INT(20) PK
+
+
+Zipcode_Table
+- 
+index INT(10)
+provider_state VARCHAR(2)
+provider_zip_code INT(5) PK
+
+
+
+
+
+
+
+
+
+
+        
+
 
 
 
