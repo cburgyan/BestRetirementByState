@@ -215,7 +215,10 @@ This page utilizes the Plotly javascript library along with OpenStreetMap, in or
 
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1e7113eb-f081-49c3-9891-3cf8715744c3)
 
+--
+## Conclusion
 
+All three interactive visualization pages will allow the user to help narrow down their search in Retirement Homes based on numerous criteria pertaining to their individual needs and wants.
 
 
 
