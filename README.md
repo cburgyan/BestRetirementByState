@@ -48,7 +48,7 @@ For this project, you can focus your efforts within a specific industry: Finance
 What are the best places to retire in each state?<br>
 Create a story with three views.<br>
 <li>
-    An overview:
+    An overview to see the count of the total number of 5-star rated nursing homes per state. This would be the first step in order to narrow down search parameters to a specific state or list of states.
 </li>
 <li>
     An interactive dashboard:
@@ -59,8 +59,10 @@ Create a story with three views.<br>
 
 
 ## Creating the DataFrames:
-ETL for creating the 'business', 'performance',  and 'zipcode' DataFrames began by reading in raw data from .xlsx files into a general DataFrame.
+We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.
 <ol style='list-style-type: upper-roman;'>
+    <img width="1186" alt="image" src="https://github.com/cburgyan/BestRetirementByState/assets/134640833/65f41e93-a556-4be6-85f2-b258ce47ba1d">
+
     <li>
         Inspecting the data via the number of rows/columns, list of all columns present and their associated data types, and investigating any non-values if present.
     </li>
