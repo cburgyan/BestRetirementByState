@@ -197,15 +197,11 @@ created from our cleaned DataFrames.<br>
 ---
 ## Index Overview Page:
 
-Our new javascript library, Chart.js, was used to plot two overview charts.<br>
-The first is a bar graph plotting how many Retirement Homes, that had a 5-star rating, were available in the corresponding state.<br>
-A hover option was also utilized to pinpoint down to any certain state.<br>
+Our new javascript library, Chart.js, was used to plot two overview charts. The first is a bar graph plotting how many Retirement Homes, that had a 5-star rating, were available in the corresponding state. A hover option was also utilized to pinpoint down to any certain state.<br>
 
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1c20ff9d-cb2c-472a-a3d6-3fd7195e7407)
 
-The second plot is a visual map displaying the same information as above.<br>
-The hover option presents more specific information about the specific state choses, such as the Provider Percentage and Total Number of Providers.<br>
-The colors shown, represent highest percentage(red), middle percentage(purple) and lowest percentage(blue) according to Provider Percentage.<br>
+The second plot is a visual map displaying the same information as above. The hover option presents more specific information about the specific state choses, such as the Provider Percentage and Total Number of Providers. The colors shown, represent highest percentage(red), middle percentage(purple) and lowest percentage(blue) according to Provider Percentage.<br>
 
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/12a0cc37-f416-4402-a17a-e8ac7dc11e90)
 
