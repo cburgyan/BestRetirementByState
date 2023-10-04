@@ -195,18 +195,27 @@ Flask and Jinja were used to set up the framework for hosting the multiple URL r
 created from our cleaned DataFrames.<br>
 
 ---
-## Index Overview Page:
+## Overview Page:
 
 Our new javascript library, Chart.js, was used to plot two overview charts. The first is a bar graph plotting how many Retirement Homes, that had a 5-star rating, were available in the corresponding state. A hover option was also utilized to pinpoint down to any certain state.<br>
 
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1c20ff9d-cb2c-472a-a3d6-3fd7195e7407)
 
-The second plot is a visual map displaying the same information as above. The hover option presents more specific information about the specific state choses, such as the Provider Percentage and Total Number of Providers. The colors shown, represent highest percentage(red), middle percentage(purple) and lowest percentage(blue) according to Provider Percentage.<br>
+The second plot is a visual map, using OpenStreetMap,  displaying the same information as above. The hover option presents more specific information about the specific state choses, such as the Provider Percentage and Total Number of Providers. The colors shown, represent highest percentage(red), middle percentage(purple) and lowest percentage(blue) according to Provider Percentage.<br>
 
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/12a0cc37-f416-4402-a17a-e8ac7dc11e90)
 
 ---
 ## Dashboard Page:
+
+--
+## Interactive Maps Page:
+
+This page utilizes the Plotly javascript library along with OpenStreetMap, in order to create an interactive map plotting all the Retirement Homes available in our database. From here, the user can filter by Overall Rating and State Location.<br>
+
+![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1e7113eb-f081-49c3-9891-3cf8715744c3)
+
+
 
 
 
