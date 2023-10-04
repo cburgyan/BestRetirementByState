@@ -21,32 +21,38 @@ async function fetchJsonDataAndCreateChart(url) {
 
         const labels = Object.keys(stateCounts);
         const data = Object.values(stateCounts);
-
+        
         new Chart(barchart, {
-            type: 'bar',
-            data: {
+          type: 'bar',
+          data: {
             labels: labels,
             datasets: [{
-            label: 'Numbers of 5 Stars rating by State',
-            data: data,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Adjust the color as needed
-            borderColor: 'rgba(75, 192, 192, 1)', // Adjust the color as needed
-            borderWidth: 1        
+              label: 'Numbers of 5 Stars rating by State',
+              data: data,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)', // Adjust the color as needed
+              borderColor: 'rgba(75, 192, 192, 1)', // Adjust the color as needed
+              borderWidth: 1        
             }]
-            },
+          },
+          options: { // Use "options" instead of "scales"
             scales: {
-            y: {
-            beginAtZero: true,
-              title: {
-                display: true,
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
                   text: 'Total numbers of 5 stars nursing homes'      
-                    },
-            x: {
-              title: {
-                display: true,
+                }
+              },
+              x: {
+                title: {
+                  display: true,
                   text: 'State'
-            }}}}
+                }
+              }
+            }
+          }
         });
+        
     } catch (error) {
         console.error('Error:', error); //de bug 
     }
