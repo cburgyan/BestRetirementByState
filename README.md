@@ -48,7 +48,7 @@ For this project, you can focus your efforts within a specific industry: Finance
 What are the best places to retire in each state?<br>
 Create a story with three views.<br>
 <li>
-    An overview:
+    An overview to see the count of the total number of 5-star rated nursing homes per state. This would be the first step in order to narrow down search parameters to a specific state or list of states.
 </li>
 <li>
     An interactive dashboard:
@@ -59,31 +59,21 @@ Create a story with three views.<br>
 
 
 ## Creating the DataFrames:
-We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.
+We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.<br>
+  
+![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/2ec99bb6-3c41-473f-af62-6fcc2c848954)
 
-<ol style='list-style-type: upper-roman;'>
-    <li>
-        Inspecting the data via the number of rows/columns, list of all columns present and their associated data types, and investigating any non-values if present.
-    </li>
-    <li>
-        Dropping any duplicate rows, if any. (None were found)
-    </li>
-    <li>
-        Adding Null to any records with non-values. 
-    </li>
-    <li>
-        Separating the Coordinates column into separate Longitude and Latitude columns.
-    </li>
-    <li>
-        Removing any extraneous columns and leaving only the ones necessary for our analysis.
-    <li>
-        Creating the three separate DataFrames from the newly cleaned DataFrame.
-    </li>
-    <li>
-        Exporting the newly created DataFrames into CSV and JSON files for future use.
-    </li>
 
-## Creating A Database From The New CSV Data Files:
+Next Steps Included:<br> 
+1. Inspecting the data via the number of rows/columns, list of all columns present and their associated data types, and investigating any non-values if present.
+2. Dropping any duplicate rows, if any. (None were found)
+3. Adding Null to any records with non-values.<br> 
+4. Separating the Coordinates column into separate Longitude and Latitude columns.<br> 
+5. Removing any extraneous columns and leaving only the ones necessary for our analysis.<br> 
+6. Creating the three separate DataFrames from the newly cleaned DataFrame.<br> 
+7. Exporting the newly created DataFrames into CSV and JSON files for future use.<br> 
+
+## Creating A Database From The New .CSV Data Files:
 
 To create a database, the CSV files were examined and an Entity-Relationship Diagram was synthesized which led to a schema. Database tables were constructed in Postgresql and, finally, these tables were populated with the data from the CSV files.
 <ol style='list-style-type: upper-roman;'>
@@ -197,6 +187,40 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
         );
 <br>            
     </li>
+
+---
+## Main.py:
+
+Flask and Jinja were used to set up the framework for hosting the multiple URL routes. These URL routes helped us to utilize different extracted JSON files
+created from our cleaned DataFrames.<br>
+
+---
+## Overview Page:
+
+Our new javascript library, Chart.js, was used to plot two overview charts. The first is a bar graph plotting how many Retirement Homes, that had a 5-star rating, were available in the corresponding state. A hover option was also utilized to pinpoint down to any certain state.<br>
+
+![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1c20ff9d-cb2c-472a-a3d6-3fd7195e7407)
+
+The second plot is a visual map, using OpenStreetMap,  displaying the same information as above. The hover option presents more specific information about the specific state choses, such as the Provider Percentage and Total Number of Providers. The colors shown, represent highest percentage(red), middle percentage(purple) and lowest percentage(blue) according to Provider Percentage.<br>
+
+![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/12a0cc37-f416-4402-a17a-e8ac7dc11e90)
+
+---
+## Dashboard Page:
+
+--
+## Interactive Maps Page:
+
+This page utilizes the Plotly javascript library along with OpenStreetMap, in order to create an interactive map plotting all the Retirement Homes available in our database. From here, the user can filter by Overall Rating and State Location.<br>
+
+![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1e7113eb-f081-49c3-9891-3cf8715744c3)
+
+--
+## Conclusion
+
+All three interactive visualization pages will allow the user to help narrow down their search in Retirement Homes based on numerous criteria pertaining to their individual needs and wants.
+
+
 
 
 
