@@ -61,18 +61,19 @@ Create a story with three views.<br>
 ## Creating the DataFrames:
 We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.
   
-!(alt text](https://raw.githubusercontent.com/cburgyan/BestRetirementByState/master/assets/134640833/65f41e93-a556-4be6-85f2-b258ce47ba1d.png)
+https://raw.githubusercontent.com/cburgyan/BestRetirementByState/master/assets/134640833/65f41e93-a556-4be6-85f2-b258ce47ba1d.png
 
 
 Next Steps Included:<br> 
 
-*Inspecting the data via the number of rows/columns, list of all columns present and their associated data types, and investigating any non-values if present.
-*Dropping any duplicate rows, if any. (None were found)
-*Adding Null to any records with non-values.
-*Separating the Coordinates column into separate Longitude and Latitude columns.
-*Removing any extraneous columns and leaving only the ones necessary for our analysis.
-*Creating the three separate DataFrames from the newly cleaned DataFrame.
-*Exporting the newly created DataFrames into CSV and JSON files for future use.<br>
++Inspecting the data via the number of rows/columns, list of all columns present and their associated data types, and investigating any non-values if present.<br> 
+*Dropping any duplicate rows, if any. (None were found)<br> 
+*Adding Null to any records with non-values.<br> 
+*Separating the Coordinates column into separate Longitude and Latitude columns.<br> 
+*Removing any extraneous columns and leaving only the ones necessary for our analysis.<br> 
+*Creating the three separate DataFrames from the newly cleaned DataFrame.<br> 
+*Exporting the newly created DataFrames into CSV and JSON files for future use.<br> 
+
 
 
 
