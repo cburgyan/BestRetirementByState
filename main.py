@@ -4,21 +4,27 @@ app = Flask(__name__)
 
 # Define a route to serve the GeoJSON file
 # if go the route it will automatically download the geojson file
+@app.route('/bestNS')
+def bestNS():
+    filename = 'static/DatasetManipulations/best_nsHomes.json'
+    return send_file(filename)
+
 @app.route('/dashboardjson')
 def dashboardjson():
-    geojson_filename = 'static/DatasetManipulations/mapping.json'
-    return send_file(geojson_filename)
+    geojson_filename3 = 'static/DatasetManipulations/dashboard_tx.json'
+    return send_file(geojson_filename3)
 
 @app.route('/geojson')
 def geojson():
     geojson_filename = 'static/DatasetManipulations/map_5rating.geojson'
-    return send_file(geojson_filename, as_attachment=True) 
+    return send_file(geojson_filename) 
 
 # adding route for 5 stars nursing home 
-@app.route('/filterMap')
+@app.route('/mappingjson')
 def another_geojson():
-    geojson_filename = 'static/DatasetManipulations/map.geojson'
-    return send_file(geojson_filename, as_attachment=True) 
+    geojson_filename2 = 'static/DatasetManipulations/mapping.json'
+    return send_file(geojson_filename2) 
+
 # Define routes for your existing pages
 @app.route('/')
 def home():
@@ -32,13 +38,5 @@ def maps():
 def dashboard():
     return render_template("dashboard.html")
 
-
-@app.route('/Dashboard2')
-def dashboard2():
-
-    return render_template("kmbDashboard.html")
-
-
 if __name__ == "__main__":
     app.run(debug=True)
-
