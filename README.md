@@ -59,10 +59,9 @@ Create a story with three views.<br>
 
 
 ## Creating the DataFrames:
-We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.
+We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.<br>
   
 https://raw.githubusercontent.com/cburgyan/BestRetirementByState/master/assets/134640833/65f41e93-a556-4be6-85f2-b258ce47ba1d.png
-
 
 Next Steps Included:<br> 
 
