@@ -11,6 +11,9 @@ Christian Cantu<br>
 ## Sources 
 <ol>
     <li>Nursing Home Quality and Staffing Database. https://www.kaggle.com/datasets/thedevastator/nursing-home-quality-staffing © 2019. This work is openly licensed via CC BY 4.0. </li>
+    <li>Property Tax Information by State. https://www.forbes.com/sites/andrewdepietro/2023/09/01/property-taxes-by-state-a-breakdown-of-the-highest-and-lowest-property-taxes-by-state/?sh=6bf5f1b7441b </li>
+    <li>Healthcare Rank for Elderly. https://medicareguide.com/best-states-for-elderly-healthcare-340840 </li>
+    <li>State Individual Tax Information. https://taxfoundation.org/data/all/state/state-income-tax-rates-2023/ </li>
     <li>Jinja (with Flask). n.d. https://palletsprojects.com/p/jinja/</li>
     <li>Stack Overflow - Where Developers Learn, Share, & Build Careers. (n.d.). Stack Overflow. https://stackoverflow.com/</li>
     <li>Plotly https://plotly.com/javascript/</li>
