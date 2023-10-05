@@ -2,6 +2,7 @@
 CREATE TABLE Zipcode_Table(
 	index INT NOT NULL,
 	provider_state VARCHAR(2) NOT NULL,
+		FOREIGN KEY (provider_state) REFERENCES Healthcare_Tax_Merged_Table(provider_state)
 	provider_zip_code INT PRIMARY KEY NOT NULL
 );
 
@@ -31,7 +32,7 @@ CREATE TABLE Business_Table (
 	provider_name VARCHAR(225) NOT NULL,
 	provider_city VARCHAR(30) NOT NULL,
 	provider_zip_code INT NOT NULL,
-		FOREIGN KEY (provider_zip_code) REFERENCES zipcode_table(provider_zip_code),
+		FOREIGN KEY (provider_zip_code) REFERENCES Zipcode_Table(provider_zip_code),
 	provider_county_name VARCHAR(30) NOT NULL,
 	ownership_type VARCHAR(30) NOT NULL,
 	number_of_certified_beds INT NOT NULL,
@@ -45,5 +46,21 @@ CREATE TABLE Business_Table (
 	longitude NUMERIC(6,6) NOT NULL,
 	adjusted_total_nurse_staffing_hours_per_resident_per_day NUMERIC(6,6) NOT NULL,
 	performance_id INT NOT NULL,
-		FOREIGN KEY (performance_id) REFERENCES performance_table(performance_id)
+		FOREIGN KEY (performance_id) REFERENCES Performance_Table(performance_id)
+);
+
+CREATE TABLE Healthcare_Tax_Merged_Table (
+	healthcare_rank INT NOT NULL,
+	provider_state VARCHAR(15) PRIMARY KEY NOT NULL,
+	healthcare_score NUMERIC(2,2) NOT NULL,
+	healthcare_cost NUMERIC(2,2) NOT NULL,
+	healthcare_quality NUMERIC(2,2) NOT NULL,
+	healthcare_access NUMERIC(2,2) NOT NULL,
+	tax_rank INT NOT NULL,
+	median_effective_property_tax_rate NUMERIC (10,10) NOT NULL,
+	mean_effective_property_tax_rate NUMERIC (10,10) NOT NULL,
+	median_home_value INT NOT NULL,
+	median_property_taxes_paid INT NOT NULL,
+	aggergate_home_value INT NOT NULL,
+	aggregate_property_taxes_paid INT NOT NULL
 );
