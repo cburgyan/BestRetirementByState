@@ -10,7 +10,7 @@ Christian Cantu<br>
 ---
 ## Sources 
 <ol>
-    <li>Nursing Home Quality and Staffing Database. https://www.kaggle.com/datasets/thedevastator/nursing-home-quality-staffing</li>
+    <li>Nursing Home Quality and Staffing Database. https://www.kaggle.com/datasets/thedevastator/nursing-home-quality-staffing © 2019. This work is openly licensed via CC BY 4.0. </li>
     <li>Jinja (with Flask). n.d. https://palletsprojects.com/p/jinja/</li>
     <li>Stack Overflow - Where Developers Learn, Share, & Build Careers. (n.d.). Stack Overflow. https://stackoverflow.com/</li>
     <li>Plotly https://plotly.com/javascript/</li>
@@ -81,8 +81,9 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
         <strong>Inspect The .csv Files And Create The Schema And Entity-Relationship Diagram:</strong><br>
         Inspecting the .csv files led to the synthesis of the following schema:<br><br> 
         
+           
             Business_Table
-            --
+            - 
             index INT(10)
             federal_provider_number INT(20) PK 
             provider_name VARCHAR(225)
@@ -102,9 +103,8 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
             adjusted_total_nurse_staffing_hours_per_resident_per_day NUMERIC(2,6)
             performance_id INT(20) FK >-< Performance_Table.performance_id
 
-            
             Performance_Table
-            --
+            -
             index INT(10)
             most_recent_health_inspection_more_than_2_years_ago VARCHAR(5)
             overall_rating INT(1)
@@ -119,16 +119,34 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
             number_of_payment_denials INT(5)
             total_number_of_penalties INT(5)
             performance_id INT(20) PK
-
-                                
+            
+            
             Zipcode_Table
-            --
+            - 
             index INT(10)
-            provider_state VARCHAR(2)
+            provider_state VARCHAR(2) FK - Healthcare_Tax_Merged_Table.provider_state
             provider_zip_code INT(5) PK
             
+            
+            Healthcare_Tax_Merged_Table
+            -
+            healthcare_rank INT(2)
+            provider_state VARCHAR(15) PK
+            healthcare_score NUMERIC(2,2)
+            healthcare_cost NUMERIC(2,2)
+            heathcare_quality NUMERIC(2,2)
+            heathcare_access NUMERIC(2,2)
+            tax_rank INT(2)
+            median_effective_property_tax_rate NUMERIC(10,10)
+            mean_effective_property_tax_rate NUMERIC(10,10)
+            median_home_value INT(10)
+            median_property_taxes_paid INT(10)
+            aggregate_home_value INT(20)
+            aggregate_property_taxes_paid INT(20)
+          
+                                          
 <br>
-        which in turn led to the following ERD built in <a href="https://www.quickdatabasediagrams.com/">QuickDatabaseDiagrams.com</a>:
+        Which in turn led to the following ERD built in <a href="https://www.quickdatabasediagrams.com/">QuickDatabaseDiagrams.com</a>:
         <br>
         <br>
         <br>
