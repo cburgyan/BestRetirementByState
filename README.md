@@ -23,6 +23,7 @@ Christian Cantu<br>
 ---
 ## Project Outline
 For Project 3, you will work with your group to tell a story using data visualizations. Here are the specific requirements:
+<ul>
 <li>
     Your visualization must include a Python Flask-powered API, HTML/CSS, JavaScript, and at least one database (SQL, MongoDB, SQLite, etc.).<br>
 <li>
@@ -43,22 +44,26 @@ For Project 3, you will work with your group to tell a story using data visualiz
 <li>
     Your final visualization should ideally include at least three views.
 </li>
-
+</ul>
 For this project, you can focus your efforts within a specific industry: Finance, Healthcare, Custom.<br>
 
 ## Project Question/Goals
+Create a story with three views.<br><br>
 What are the best places to retire in each state?<br>
-Create a story with three views.<br>
+<ul>
 <li>
     An overview to see the count of the total number of 5-star rated nursing homes per state. This would be the first step in order to narrow down search parameters to a specific state or list of states.
 </li>
 <li>
-    An interactive dashboard:
-</li>
-<li>
     An interactive map to explore the dataset by using filters for location and overall rating.
 </li>
-
+</ul>
+What are the best retirement homes for you specifically?
+<ul>
+<li>
+    An interactive dashboard that allows you to fine tune your search for a more perfect match for a retirement with a weighted priority search that takes seconds to personalizeto your needs and desires.
+    </li>
+</ul>
 
 ## Creating the DataFrames:
 We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.<br>
@@ -227,19 +232,114 @@ The second plot is a visual map, using OpenStreetMap,  displaying the same infor
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/12a0cc37-f416-4402-a17a-e8ac7dc11e90)
 
 ---
-## Dashboard Page:
-
---
 ## Interactive Maps Page:
 
 This page utilizes the Plotly javascript library along with OpenStreetMap, in order to create an interactive map plotting all the Retirement Homes available in our database. From here, the user can filter by Overall Rating and State Location.<br>
 
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1e7113eb-f081-49c3-9891-3cf8715744c3)
 
---
+---
+## Dashboard Page:
+The interactive dashboard allows you to set your preferences in a search for the right retirement home to whatever attributes you value in a retirement home from among 29 categories. With this ability, you can answer the question, "Where's a good place to retire for ME with MY priorities?" <br><br>
+The dashboard is an interactive experience that:
+<ul>
+    <li>
+        allows you to peruse 15,000+ retirement homes across the United States
+    </li><br>
+    <img src='./extraProjectFiles/dashboardOpeningPage.png'><br><br>
+    <li>
+        allows for the investigation of retirement homes based upon any number of the following 29 categories: 
+        <ul>
+            <li>
+                'Staffing Rating', 'Health Inspection Rating', 'RN Staffing Rating',  'Provider Type',
+                'Provider City', 'Number of Substantiated Complaints', 'Provider State',  'Number of Certified Beds', 'Number of Residents in Certified Beds', 
+                'Provider Resides in Hospital', 'Provider Name', 'Federal Provider Number',
+                'Most Recent Health Inspection More Than 2 Years Ago', 
+                'Automatic Sprinkler Systems in All Required Areas', 'Overall Rating',
+                'Total Weighted Health Survey Score','Number of Facility Reported Incidents',
+                'Number of Fines', 'Provider Zip Code', 'Provider County Name',
+                'Ownership Type',
+                'Total Amount of Fines in Dollars', 'Number of Payment Denials',
+                'Total Number of Penalties', 'Location', 'Processing Date', 'Latitude',
+                'Adjusted Total Nurse Staffing Hours per Resident per Day', 'Longitude'
+            </li>
+        </ul>
+    </li><br>
+    <img src='./extraProjectFiles/dashboardChoosingCategory1.png'><br><br>
+    <li>
+        allows you to put a weight on the values of any of the categories in a way that aligns with your priorities. For example:
+        <ul>
+            <li>
+                if you value living in a retirement home that has a 5-star rated staff, you could put a high weight on 'Staffing Rating' equal to '5'
+            </li>
+            <li>
+                if you value living in Oregon, then you could put a high weight value on 'Provider State' equal to Oregon,
+            </li>
+            <li>
+                if you value living in a retirement home that's not in a Hospital, you could put a high weight on 'Provider Resides in Hospital' equal to 'False'
+            </li>
+        </ul>
+    </li><br>
+    <img src='./extraProjectFiles/dashboardWeightOnValue.png'><br><br>
+    <li>
+        allows you to stack multiple weighted categories and even multiple values within a category. For example:
+        <ul>
+            <li>
+                if you value living in Miami, with highly rated staff, in a place that accepts medicare, and a high health inspection rating, then you could put high weights on 'Provider City' equal to 'Miami', 'Staffing Rating' equal to '5', 'Provider Type' equal to 'Medicare', 'Provider Type' equal to 'Medicare and Medicaid', and 'Health Inspection Rating' equal to '5'
+            </li>
+            <li>
+                if you desire to live in one of the 4 cities of 'Miami', 'Orlando', 'Denver', or 'St. Augustine', then you could put high weights on 'Provider City' equal to 'Miami', 'Orlando', 'Denver', and 'St. Augustine'
+            </li>
+        </ul>
+    </li><br>
+    <img src='./extraProjectFiles/dashboardChoosingCategory.png'><br><br>
+    <li>
+        allows you to put a negative weight on values of a category that corresponds to qualities you want to avoid. For example:
+        <ul>
+            <li>
+                if you want to live in Florida in a retirement home with a 5-star 'Overall Rating' but not in Tampa, Florida, then you could put a high weigh on 'Provider State' equal 'FL' with a weight of '4', 'Overall Rating' equal to '5' with a weight of '4', and 
+                'Provider City' equal to 'Tampa' with a weight of '-4'
+            </li>
+        </ul>
+    </li>
+    <li>
+        allows you to put a weight on a range of values for a given category, which is useful while stacking multiple different categories. For example:
+        <ul>
+            <li>
+                if you value a good staff but also value a low number of penalties and a high health inspection rating, then you could set 'Staffing Rating' to 'Value as range' with a weight of '3', set 'Total Number of Penalties' to 'Value as range' with a weight of '-2', and set 'Health Inspection Rating' to 'Value as range' with a weight of '4' 
+            </li>
+        </ul>
+    </li><br>
+    <img src='./extraProjectFiles/dashboardNegativeWeightStack.png'><br><br>
+    <li>
+        allows you to choose between getting the top 10, 20, 50, 100, or 200 retirement homes in accordance with your desired weighting system
+    </li>
+    <li>
+        displays multiple chart views from the retirement data such as:
+        <ul>
+            <li>
+                the weighted totals in a bar chart of the top X number of retirement homes
+            </li>
+            <li>
+                the weighted total by category for each retirement home in a group bar chart
+            </li><br>
+            <img src='./extraProjectFiles/dashboardCategoryBarAndTop20BarChart1.png'><br><br>
+            <li>
+                the weighted total by category alone which shows how much the weight is affecting the ranking of all of the retirement homes in a doughnut chart
+            </li>
+            <li>
+                the correlations between the various categories chosen for the weighting that have a numerical value associated with them
+            </li><br>
+            <img src='./extraProjectFiles/dashboardDoughnutCorrelationWithPopup.png'><br><br>
+        </ul>
+    </li>
+</ul>
+So, the dashboard, with its 29 categories, can cater to all sorts of varying opinions on value. It allows you to get the top 10, 20, 50 (etc.) options that speak to the specifics of your life's priorities.<br><br>
+
+---
 ## Conclusion
 
-All three interactive visualization pages will allow the user to help narrow down their search in Retirement Homes based on numerous criteria pertaining to their individual needs and wants.
+All three interactive visualization pages will allow the user to help narrow down their search in Retirement Homes based on numerous criteria pertaining to their individual needs and wants. The overview and the interactive maps give a bird's eye view of all the states by overall rating of the retirement homes there to answer the question,  "What are the best places to retire in each state in general?", for someone who doesn't have time to look into the details. And, on the other hand, the interactive dashboard fine tunes the search to the particulars of the individual's tastes and answers the question, "What are the best retirement homes for ME specifically?"
 
 
 
