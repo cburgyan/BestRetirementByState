@@ -64,6 +64,7 @@ function updateMap(selectedState, selectRating){
             onEachFeature: function (feature, layer) {
             const popupContent = `
                 <b>Provider Name:</b> ${feature.properties["Provider Name"]}<br>
+                <b>Phone Number:</b> ${feature.properties["Provider Phone Number"]}<br>
                 <b>Rating:</b> ${feature.properties["Overall Rating"]}<br>
                 <b>Location:</b> ${feature.properties["Location"]}
             `;  // last step get bindpopup for location rating and provider name
@@ -71,4 +72,3 @@ function updateMap(selectedState, selectRating){
         }}).addTo(htown_map);
     })
 }
-
