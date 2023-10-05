@@ -245,7 +245,7 @@ The second plot is a visual map, using OpenStreetMap,  displaying the same infor
 ---
 ## Dashboard Page:
 
-This page utilizes three different javascript libraries: Leaflet, Plotly, and Chart. This is where the user can drill down on the most important aspects of their search parameters, as well as let certain parameters, of higher importance, hold more weight. This was done by creating filters before calculating the associated map and plots. <br>
+This page utilizes three different javascript libraries: Leaflet, Plotly, and Chart. This is where the user can drill down on the most important aspects of their search parameters, as well as let certain parameters, of higher importance, hold more weight. This was done by creating filters before calculating the associated map and plots. The map and each chart are equipped with hover capabilities in order to pinpoint and interpret the results of the search parameters. <br>
 
  ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/39c7b82f-693e-4790-9a35-b957930a2a52)
 
