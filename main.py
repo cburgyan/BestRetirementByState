@@ -16,7 +16,7 @@ def dashboardjson():
 
 @app.route('/geojson')
 def geojson():
-    geojson_filename = 'static/DatasetManipulations/map_5rating.geojson'
+    geojson_filename = 'static/DatasetManipulations/all_nursing_homes.geojson'
     return send_file(geojson_filename) 
 
 # adding route for 5 stars nursing home 
