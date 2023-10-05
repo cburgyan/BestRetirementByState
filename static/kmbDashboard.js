@@ -1,7 +1,7 @@
 const urlJSONByColumn = '/static/DatasetManipulations/truncated_nursing_df2.json';
 const urlJSONByRow = '/static/DatasetManipulations/truncated_nursing_df2_by_record.json';
 const urlJSONCorrelationsByRow = '/static/DatasetManipulations/correlations_df_by_record.json';
-const colors = ['#a00', '#b60', '#e80', '#ed0', '#c0ee00', '#6f0'];
+const colors = ['#a0d', '#b6a', '#e87', '#ed3', '#c0ee11', '#6f0'];
 const listOfTruncatedNursingDataFrameColumns = ['Federal Provider Number', 'Provider Name',
     'Provider City', 'Provider State', 'Provider Zip Code', 'Provider County Name',
     'Ownership Type', 'Number of Certified Beds', 'Number of Residents in Certified Beds',
@@ -45,7 +45,7 @@ function disableRadioButton(disableIt, buttonId) {
         allOrNothingRadioButton.checked = true;
     } else if (buttonId.includes('range') && !disableIt) {
         radioButton.checked = true;
-        
+
     }
 }
 
@@ -601,11 +601,11 @@ function addCategoryPanel() {
     });
 
 
-    
+
     let hCat = form.append('h4');
     hCat.html('Category:');
     hCat.attr('style', 'font-weight: 600;')
-    
+
     // form.append('br');
 
     // console.log('%%%%%%%%%%%%%%%%');
@@ -662,8 +662,8 @@ function addCategoryPanel() {
     //         document.getElementById(`selDataset${categoryCount * 2 + 1}`).disabled = false;
     //     }
     // });
-    
-    
+
+
 
     form.append('br');
 
@@ -685,6 +685,15 @@ function addCategoryPanel() {
 }
 
 
+function getColors(numOfColorSteps, seed, alpha) {
+    let colors1 = [];
+    for (let i = 0; i < numOfColorSteps; i++) {
+        colors1.push(getRGBAString(i, Math.random() * seed, alpha));
+    }
+    return colors1;
+}
+
+
 function createMarkers(dataRow, myMap) {
     let features = [];
 
@@ -701,7 +710,12 @@ function createMarkers(dataRow, myMap) {
     let distributionMax;
     let distributionMin;
     let delta;
-    let numOfSteps = 6;
+    let numOfColorSteps = 6;
+
+    let colors1 = getColors(numOfColorSteps, 1000, 0.6);
+
+
+
     if ('totalWeightedScore' in features[0].properties) {
         distributionMax = features[0].properties['totalWeightedScore'];
         distributionMin = features[0].properties['totalWeightedScore'];
@@ -729,12 +743,13 @@ function createMarkers(dataRow, myMap) {
 
 
     if (distributionMax != distributionMin) {
-        if ((distributionMax - distributionMin) >= numOfSteps) {
-            delta = (distributionMax - distributionMin) / numOfSteps;
+        if ((distributionMax - distributionMin) >= numOfColorSteps) {
+            delta = (distributionMax - distributionMin) / numOfColorSteps;
         } else {
             delta = 1;
         }
     }
+
 
     // console.log(`features:\n${JSON.stringify(features)}`);
     // Create a geoJSON layer to add markers to map.
@@ -769,6 +784,12 @@ function createMarkers(dataRow, myMap) {
                 }
             }
 
+            // To assure fillColor1 always has a color
+            if (!colors.includes(fillColor1)) {
+                fillColor1 = colors[0];
+            }
+
+
             markerOptions = {
                 opacity: 1,
                 fillOpacity: 0.65,
@@ -793,7 +814,7 @@ function createMarkers(dataRow, myMap) {
 
 
             if ('totalWeightedScore' in feature.properties) {
-                layer.bindPopup(`<span style='font-size: 14px;'><strong>${feature.properties['Provider Name']}:<br>${feature.properties['Provider City']}, ${feature.properties['Provider State']}</strong><hr>Latitude: ${latLng[0].toFixed(3)}, Longitude: ${latLng[1].toFixed(3)}<br>Total Weighted Score: ${feature.properties['totalWeightedScore']}</span>`).addTo(myMap);
+                layer.bindPopup(`<span style='font-size: 14px;'><strong>${feature.properties['Provider Name']}:<br>${feature.properties['Provider City']}, ${feature.properties['Provider State']}</strong><hr>Latitude: ${latLng[0].toFixed(3)}, Longitude: ${latLng[1].toFixed(3)}<br>Total Weighted Score: ${feature.properties['totalWeightedScore'].toFixed(3)}</span>`).addTo(myMap);
             } else {
                 layer.bindPopup(`<span style='font-size: 14px;'><strong>${feature.properties['Provider Name']}:<br>${feature.properties['Provider City']}, ${feature.properties['Provider State']}</strong><hr>Latitude: ${latLng[0].toFixed(3)}, Longitude: ${latLng[1].toFixed(3)}<br>Overall Ratings: ${feature.properties['Overall Rating']} <br>Processing Date: ${feature.properties['Processing Date']}</span>`).addTo(myMap);
             }
@@ -811,6 +832,9 @@ function removeAllMapMarkers() {
             return;
         }
     });
+    myMap.remove()
+    let stepLabels = ['Least', '&emsp;.', '&emsp;.', '&emsp;.', '&emsp;.', 'Greatest'];
+    createMap(topXRecords, 'Weighted Total', stepLabels);
 
 }
 
@@ -822,7 +846,45 @@ function createWeightedMap() {
 
 }
 
-function createMap(dataRows) {
+function createLegend(myMap, legendLabels, legendTitle) {
+    // Create L.Control object for the legend
+    let legend = L.control({ position: 'bottomright' });
+
+    // Implementing .onAdd method for the L.Control object
+    legend.onAdd = function () {
+        // Create a div to conatain the legend
+        let div = L.DomUtil.create('div', 'legend');
+
+        // Style the legend-div with a white background, a margin that is aesthetically appealling
+        // (subjectively, of course), and round the corners of the div
+        div.setAttribute('style', 'background-color: white; margin-left: 0px; padding: 0px 10px 0px 0px; border-radius: 5px;');
+        let labels = [];
+
+
+        // Create a string filled with html code to construct the legend-- primarily relying on a
+        // unordered list and its elements
+        let legendHTMLString = `<div style='padding: 4px; font-size: 1.2rem;'><strong>&emsp;${legendTitle}</strong><br><ul style=\"list-style-type: none; padding-left: 10px;\">`;
+        for (let i = 0; i < colors.length; i++) {
+
+            legendHTMLString += `<li><span style=\"background-color: ${colors[i]};\">&emsp;</span> ${legendLabels[i]}</li>`;
+
+        }
+
+        legendHTMLString += "</ul></div>";
+
+        // Implement the string as html code
+        div.innerHTML = legendHTMLString;
+
+        // Return the fabricated div tag
+        return div;
+    }
+
+    // Add the legend to the map
+    legend.addTo(myMap);
+}
+
+
+function createMap(dataRows, legendTitle, stepLabels) {
     // console.log(`dataRows: \n${dataRows}`);
     let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -838,149 +900,95 @@ function createMap(dataRows) {
 
     // Create and add the markers to the map
     createMarkers(dataRows, myMap);
+
+
+    // Create and the markers to the map
+    createLegend(myMap, stepLabels, legendTitle);
 }
 
 
-// function getRGBAString(value, initialSeed, alpha){
-//     let color1 = 
-//     `rgba(${(Math.abs(Math.floor((value + 333) * 200))) % 256}, ${(Math.abs(Math.floor((value + 444) * 203))) % 256}, ${(Math.abs(Math.floor((value + 555) * 207))) % 256}, ${.6})`;
-// }
+function getRGBAString(value, initialSeed, alpha) {
+   return `rgba(${(Math.abs(Math.floor((value + initialSeed + 333) * 200))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 444) * 203))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 555) * 207))) % 256}, ${alpha})`;
+}
 
 
 function createCategoryChart() {
 
-    // // console.log('1');
-    // let arrOfTraces = [];
-    // for (let h = 0; h < listOfWeightedCategories.length; h++) {
-    //     let trace = { type: 'bar' };
-    //     let x = topXRecordColumns['Provider Name'];
-    //     trace['x'] = x;
-    //     let category = listOfWeightedCategories[h].category;
-    //     // console.log('2');
-    //     trace['name'] = category;
-    //     // console.log(JSON.stringify(trace));
-    //     // break;
-    //     let y = [];
-    //     let text = [];
-    //     for (let i = 0; i < topXRecords.length; i++) {
-    //         let value = topXRecordColumns[category][i];
-    //         text.push(`Value: ${value}`);
-    //         // console.log('2');
-    //         // console.log(`value: ${value}`);
-    //         let range_all = listOfWeightedCategories[h].range_All;
-    //         // console.log(`listOfWeightedCategories[h].range_All: ${listOfWeightedCategories[h].range_All}`);
-    //         if (range_all == 'range') {
-    //             // console.log('5');
-
-    //             y.push(parseFloat(value) * parseFloat(listOfWeightedCategories[h].weight));
-    //         } else if (String(value) == String(listOfWeightedCategories[h].value)) {
-    //             // console.log('6');
-    //             y.push(parseFloat(listOfWeightedCategories[h].weight));
-    //         } else {
-    //             // console.log('7');
-    //             y.push(0);
-    //         }
-    //     }
-    //     trace['y'] = y;
-    //     trace['text'] = text;
-    //     console.log(JSON.stringify(trace));
-    //     // break;
-    //     arrOfTraces.push(trace);
-    // }
-    // console.log(JSON.stringify(arrOfTraces));
-
-
-    // // let data = [trace1, trace2];
-
-    // // Layout settings
-    // let layout = {
-    //     title: 'Category Weight Contribution By Provider',
-    //     barmode: 'group',
-    //     yaxis: {
-    //         title: 'Category Weight Contribution'
-    //     },
-    //     margin: {
-    //         b: 200
-    //     }
-    // };
-
-    // // Plot the chart
-    // Plotly.newPlot('groupCategoryChart', arrOfTraces, layout);
-
-    
-
-    
-
-    if (groupCategoryWeightsChart) {
-        groupCategoryWeightsChart.destroy();
-    }
-
-    let ctx = document.getElementById('groupCategoryChart').getContext('2d');
-
-
-    let data = {};
-    data['datasets'] = [];
-    let listDictCategoryWeightedValuesForData = [];
-
-    
+    // console.log('1');
+    let arrOfTraces = [];
     for (let h = 0; h < listOfWeightedCategories.length; h++) {
-        let catDict = {};
+        console.log(`color${h}: ${getRGBAString(h, h + 390, 0.5)}`);
+        console.log(`color${h}: ${getRGBAString(h, h + 390, 0.8)}`);
+        let trace = {
+            type: 'bar',
+            opacity: 0.6,
+            marker: {
+                color: getRGBAString(h, h + 390, 0.7),  // Bar values
+                line: {
+                    color: getRGBAString(h, h + 390, 1),
+                }  // Using the Viridis color scale
+            }
+        };
         let x = topXRecordColumns['Provider Name'];
-        data['labels'] = x;
+        trace['x'] = x;
         let category = listOfWeightedCategories[h].category;
-
-        catDict['label'] = category;
         // console.log('2');
+        trace['name'] = category;
+        // console.log(JSON.stringify(trace));
         // break;
         let y = [];
-        catDict['backgroundColor'] = [];
-        catDict['borderColr'] = [];
+        let text = [];
         for (let i = 0; i < topXRecords.length; i++) {
             let value = topXRecordColumns[category][i];
+            text.push(`Value: ${value}`);
             // console.log('2');
             // console.log(`value: ${value}`);
             let range_all = listOfWeightedCategories[h].range_All;
             // console.log(`listOfWeightedCategories[h].range_All: ${listOfWeightedCategories[h].range_All}`);
-            let weightedValue = 0;
             if (range_all == 'range') {
                 // console.log('5');
-                weightedValue = parseFloat(value) * parseFloat(listOfWeightedCategories[h].weight);
-                y.push(weightedValue);
+
+                y.push(parseFloat(value) * parseFloat(listOfWeightedCategories[h].weight));
             } else if (String(value) == String(listOfWeightedCategories[h].value)) {
                 // console.log('6');
-                weightedValue = parseFloat(listOfWeightedCategories[h].weight);
-                y.push(weightedValue);
+                y.push(parseFloat(listOfWeightedCategories[h].weight));
             } else {
                 // console.log('7');
                 y.push(0);
             }
-
-            catDict['backgroundColor'].push(`rgba(${(Math.abs(Math.floor((weightedValue + 333) * 200))) % 256}, ${(Math.abs(Math.floor((weightedValue + 444) * 203))) % 256}, ${(Math.abs(Math.floor((weightedValue + 555) * 207))) % 256}, ${.6})`);
-            catDict['borderColr'].push(`rgba(${(Math.abs(Math.floor((weightedValue + 111) * 200))) % 256}, ${(Math.abs(Math.floor((weightedValue + 222) * 203))) % 256}, ${(Math.abs(Math.floor((weightedValue + 333) * 207))) % 256}, ${.6})`);
-
         }
-        catDict['data'] = y;
-        console.log(JSON.stringify(catDict));
-        data['datasets'].push(catDict);
+        trace['y'] = y;
+        trace['text'] = text;
+        console.log(JSON.stringify(trace));
+        // break;
+        arrOfTraces.push(trace);
     }
+    console.log(JSON.stringify(arrOfTraces));
 
 
-    
+    // let data = [trace1, trace2];
 
-
-    groupCategoryWeightsChart = new Chart(ctx, {
-        type: 'bar',
-        data: data, 
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+    // Layout settings
+    let layout = {
+        title: 'Category Weight Contribution By Provider',
+        barmode: 'group',
+        yaxis: {
+            title: 'Category Weight Contribution'
+        },
+        margin: {
+            b: 200
         }
-    },);
+    };
 
+    // Plot the chart
+    Plotly.newPlot('groupedChart', arrOfTraces, layout);
 }
+
+
+
+
+
+
 
 
 d3.json(urlJSONCorrelationsByRow).then(function (correlationsData) {
@@ -995,7 +1003,7 @@ d3.json(urlJSONByRow).then(function (dataRows) {
     dataByRow = structuredClone(dataRows);
     console.log('Data by Row: ');
     console.log(dataRows);
-    createMap(dataRows);
+    createMap(dataRows, 'Overall Rating', ['null', 1,2,3,4,5]);
 
 });
 
