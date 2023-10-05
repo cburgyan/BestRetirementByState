@@ -16,6 +16,8 @@ Christian Cantu<br>
     <li>Plotly https://plotly.com/javascript/</li>
     <li>Chart.js https://www.chartjs.org/docs/latest/</li>
     <li>Leaftlet https://leafletjs.com/</li>
+    <li>GeoJSON https://geojson.io/#map=11.02/29.7666/-95.4065</li>
+    <li>ChatGPT https://chat.openai.com/</li>
 </ol>
 
 ---
@@ -143,7 +145,8 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
             median_property_taxes_paid INT(10)
             aggregate_home_value INT(20)
             aggregate_property_taxes_paid INT(20)
-          
+
+                               
                                           
 <br>
         Which in turn led to the following ERD built in <a href="https://www.quickdatabasediagrams.com/">QuickDatabaseDiagrams.com</a>:
