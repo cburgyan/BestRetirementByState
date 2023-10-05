@@ -68,12 +68,12 @@ What are the best places to retire in each state?<br>
 What are the best retirement homes for you specifically?
 <ul>
 <li>
-    An interactive dashboard that allows you to fine tune your search for a more perfect match for a retirement with a weighted priority search that takes seconds to personalizeto your needs and desires.
+    An interactive dashboard that allows you to fine-tune your search for a more perfect match for retirement with a weighted priority search that takes seconds to personalize to your needs and desires.
     </li>
 </ul>
 
 ## Creating the DataFrames:
-We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance', 'zipcode', and the "healthcare/tax' DataFrames from the original .xlsx files into new CSV and JSON files.<br>
+We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance', 'zipcode', and the 'healthcare/tax' DataFrames from the original .xlsx files into new CSV and JSON files.<br>
   
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/2ec99bb6-3c41-473f-af62-6fcc2c848954)
 
@@ -87,7 +87,7 @@ Next Steps Included:<br>
 6. Creating the three separate DataFrames from the newly cleaned DataFrame.<br> 
 7. Exporting the newly created DataFrames into CSV and JSON files for future use.<br> 
 
-## Creating A Database From The New .CSV Data Files:
+## Creating A Database From The New CSV Data Files:
 
 To create a database, the CSV files were examined and an Entity-Relationship Diagram was synthesized which led to a schema. Database tables were constructed in Postgresql and, finally, these tables were populated with the data from the CSV files.
 <ol style='list-style-type: upper-roman;'>
@@ -279,7 +279,7 @@ The dashboard is an interactive experience that:
                 'Provider Resides in Hospital', 'Provider Name', 'Federal Provider Number',
                 'Most Recent Health Inspection More Than 2 Years Ago', 
                 'Automatic Sprinkler Systems in All Required Areas', 'Overall Rating',
-                'Total Weighted Health Survey Score','Number of Facility Reported Incidents',
+                'Total Weighted Health Survey Score', 'Number of Facility Reported Incidents',
                 'Number of Fines', 'Provider Zip Code', 'Provider County Name',
                 'Ownership Type',
                 'Total Amount of Fines in Dollars', 'Number of Payment Denials',
@@ -329,7 +329,7 @@ The dashboard is an interactive experience that:
         allows you to put a weight on a range of values for a given category, which is useful while stacking multiple different categories. For example:
         <ul>
             <li>
-                if you value a good staff but also value a low number of penalties and a high health inspection rating, then you could set 'Staffing Rating' to 'Value as range' with a weight of '3', set 'Total Number of Penalties' to 'Value as range' with a weight of '-2', and set 'Health Inspection Rating' to 'Value as range' with a weight of '4' 
+                if you value good staff but also value a low number of penalties and a high health inspection rating, then you could set 'Staffing Rating' to 'Value as range' with a weight of '3', set 'Total Number of Penalties' to 'Value as range' with a weight of '-2', and set 'Health Inspection Rating' to 'Value as range' with a weight of '4' 
             </li>
         </ul>
     </li><br>
@@ -348,7 +348,7 @@ The dashboard is an interactive experience that:
             </li><br>
             <img src='./extraProjectFiles/dashboardCategoryBarAndTop20BarChart1.png'><br><br>
             <li>
-                the weighted total by category alone which shows how much the weight is affecting the ranking of all of the retirement homes in a doughnut chart
+                the weighted total by category alone which shows how much the weight affects the ranking of all of the retirement homes in a doughnut chart
             </li>
             <li>
                 the correlations between the various categories chosen for the weighting that have a numerical value associated with them
@@ -362,7 +362,7 @@ So, the dashboard, with its 29 categories, can cater to all sorts of varying opi
 ---
 ## Conclusion
 
-All three interactive visualization pages will allow the user to help narrow down their search in Retirement Homes based on numerous criteria pertaining to their individual needs and wants. The overview and the interactive maps give a bird's eye view of all the states by overall rating of the retirement homes there to answer the question,  "What are the best places to retire in each state in general?", for someone who doesn't have time to look into the details. And, on the other hand, the interactive dashboard fine tunes the search to the particulars of the individual's tastes and answers the question, "What are the best retirement homes for ME specifically?"
+All three interactive visualization pages will allow the user to help narrow down their search in Retirement Homes based on numerous criteria pertaining to their individual needs and wants. The overview and the interactive maps give a bird's eye view of all the states by the overall rating of the retirement homes there to answer the question,  "What are the best places to retire in each state in general?", for someone who doesn't have time to look into the details. And, on the other hand, the interactive dashboard fine-tunes the search to the particulars of the individual's tastes and answers the question, "What are the best retirement homes for ME specifically?"
 
 
 
