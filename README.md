@@ -73,7 +73,7 @@ What are the best retirement homes for you specifically?
 </ul>
 
 ## Creating the DataFrames:
-We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance',  and 'zipcode' DataFrames from the original .xlsx files into new CSV and JSON files.<br>
+We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance', 'zipcode', and the "healthcare/tax' DataFrames from the original .xlsx files into new CSV and JSON files.<br>
   
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/2ec99bb6-3c41-473f-af62-6fcc2c848954)
 
