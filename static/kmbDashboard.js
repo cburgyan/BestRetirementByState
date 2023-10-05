@@ -310,7 +310,15 @@ function calculateTotalWeight() {
     let sorted2DArray = [...sortedMap];
 
     // console.log(sorted2DArray);
-    let indicesAndTotalsForTopX = sorted2DArray.slice(0, topXValue);
+    let count = 0;
+    let topXIndicesAndTotalList = [];
+    while (count < sorted2DArray.length && topXIndicesAndTotalList.length < topXValue){
+        if (!Number.isNaN(sorted2DArray[count][1])){
+            topXIndicesAndTotalList.push(sorted2DArray[count]);
+        }
+        count += 1;
+    }
+    let indicesAndTotalsForTopX = topXIndicesAndTotalList;
     // console.log(indicesAndTotalsForTopX);
     getRecordsByIndices(indicesAndTotalsForTopX);
 

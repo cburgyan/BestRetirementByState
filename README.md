@@ -211,6 +211,22 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
         	performance_id INT NOT NULL,
         		FOREIGN KEY (performance_id) REFERENCES performance_table(performance_id)
         );
+
+        CREATE TABLE Healthcare_Tax_Merged_Table (
+        	healthcare_rank INT NOT NULL,
+        	provider_state VARCHAR(15) PRIMARY KEY NOT NULL,
+        	healthcare_score NUMERIC(2,2) NOT NULL,
+        	healthcare_cost NUMERIC(2,2) NOT NULL,
+        	healthcare_quality NUMERIC(2,2) NOT NULL,
+        	healthcare_access NUMERIC(2,2) NOT NULL,
+        	tax_rank INT NOT NULL,
+        	median_effective_property_tax_rate NUMERIC (10,10) NOT NULL,
+        	mean_effective_property_tax_rate NUMERIC (10,10) NOT NULL,
+        	median_home_value INT NOT NULL,
+        	median_property_taxes_paid INT NOT NULL,
+        	aggergate_home_value INT NOT NULL,
+        	aggregate_property_taxes_paid INT NOT NULL
+        );
 <br>            
     </li>
 
@@ -234,7 +250,7 @@ The second plot is a visual map, using OpenStreetMap,  displaying the same infor
 ---
 ## Interactive Maps Page:
 
-This page utilizes the Plotly javascript library along with OpenStreetMap, in order to create an interactive map plotting all the Retirement Homes available in our database. From here, the user can filter by Overall Rating and State Location.<br>
+This page utilizes the Leaflet javascript library along with OpenStreetMap, in order to create an interactive map plotting all the Retirement Homes available in our database. From here, the user can filter by Overall Rating and State Location.<br>
 
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1e7113eb-f081-49c3-9891-3cf8715744c3)
 
