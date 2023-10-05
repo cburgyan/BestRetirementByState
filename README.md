@@ -21,6 +21,10 @@ Christian Cantu<br>
 </ol>
 
 ---
+## Slide Show Presentation
+ <a href="https://docs.google.com/presentation/d/1AyTMH9kfPEsVNtOroBVTMRJSpqwhL2s2nFbILeGHiko/edit#slide=id.p1">Slide Show Link</a>
+
+---
 ## Project Outline
 For Project 3, you will work with your group to tell a story using data visualizations. Here are the specific requirements:
 <ul>
