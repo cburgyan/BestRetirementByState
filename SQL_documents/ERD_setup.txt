@@ -1,3 +1,4 @@
+
 Business_Table
 - 
 index INT(10)
@@ -40,9 +41,22 @@ performance_id INT(20) PK
 Zipcode_Table
 - 
 index INT(10)
-provider_state VARCHAR(2)
+provider_state VARCHAR(2) FK - Healthcare_Tax_Merged_Table.provider_state
 provider_zip_code INT(5) PK
 
 
-
-
+Healthcare_Tax_Merged_Table
+-
+healthcare_rank INT(2)
+provider_state VARCHAR(15) PK
+healthcare_score NUMERIC(2,2)
+healthcare_cost NUMERIC(2,2)
+heathcare_quality NUMERIC(2,2)
+heathcare_access NUMERIC(2,2)
+tax_rank INT(2)
+median_effective_property_tax_rate NUMERIC(10,10)
+mean_effective_property_tax_rate NUMERIC(10,10)
+median_home_value INT(10)
+median_property_taxes_paid INT(10)
+aggregate_home_value INT(20)
+aggregate_property_taxes_paid INT(20)
