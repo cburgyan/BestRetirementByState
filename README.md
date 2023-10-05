@@ -72,6 +72,22 @@ What are the best retirement homes for you specifically?
     </li>
 </ul>
 
+## Javascript Libraries used
+<ol>
+    <li>
+        Chart.js
+    </li>
+    <li>
+        Leaflet.js
+    </li>
+    <li>
+        Plotly.js
+    </li>
+    <li>
+        GeoJSON.js
+    </li>
+</ol>
+
 ## Creating the DataFrames:
 We created a jupyter notebook using pandas to load, clean, transform, extract, and export the 'business', 'performance', 'zipcode', and the 'healthcare/tax' DataFrames from the original .xlsx files into new CSV and JSON files.<br>
   
