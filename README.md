@@ -206,6 +206,22 @@ To create a database, the CSV files were examined and an Entity-Relationship Dia
         	performance_id INT NOT NULL,
         		FOREIGN KEY (performance_id) REFERENCES performance_table(performance_id)
         );
+
+        CREATE TABLE Healthcare_Tax_Merged_Table (
+        	healthcare_rank INT NOT NULL,
+        	provider_state VARCHAR(15) PRIMARY KEY NOT NULL,
+        	healthcare_score NUMERIC(2,2) NOT NULL,
+        	healthcare_cost NUMERIC(2,2) NOT NULL,
+        	healthcare_quality NUMERIC(2,2) NOT NULL,
+        	healthcare_access NUMERIC(2,2) NOT NULL,
+        	tax_rank INT NOT NULL,
+        	median_effective_property_tax_rate NUMERIC (10,10) NOT NULL,
+        	mean_effective_property_tax_rate NUMERIC (10,10) NOT NULL,
+        	median_home_value INT NOT NULL,
+        	median_property_taxes_paid INT NOT NULL,
+        	aggergate_home_value INT NOT NULL,
+        	aggregate_property_taxes_paid INT NOT NULL
+        );
 <br>            
     </li>
 
@@ -229,10 +245,23 @@ The second plot is a visual map, using OpenStreetMap,  displaying the same infor
 ---
 ## Dashboard Page:
 
+This page utilizes three different javascript libraries: Leaflet, Plotly, and Chart. This is where the user can drill down on the most important aspects of their search parameters, as well as let certain parameters, of higher importance, hold more weight. This was done by creating filters before calculating the associated map and plots. <br>
+
+ ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/39c7b82f-693e-4790-9a35-b957930a2a52)
+
+ ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/7efb8500-31e6-463f-8746-028f322fc9df)
+
+![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/88e3e6cd-26b8-4aba-9a10-6fc46445abc5)
+
+![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/5e910d3f-dc11-4631-81fc-359ed82c111d)
+
+![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/e869d8c8-41f6-45f4-9410-96b2b5c8552a)
+
+
 --
 ## Interactive Maps Page:
 
-This page utilizes the Plotly javascript library along with OpenStreetMap, in order to create an interactive map plotting all the Retirement Homes available in our database. From here, the user can filter by Overall Rating and State Location.<br>
+This page utilizes the Leaflet javascript library along with OpenStreetMap, in order to create an interactive map plotting all the Retirement Homes available in our database. From here, the user can filter by Overall Rating and State Location.<br>
 
 ![image](https://github.com/cburgyan/BestRetirementByState/assets/134640833/1e7113eb-f081-49c3-9891-3cf8715744c3)
 
