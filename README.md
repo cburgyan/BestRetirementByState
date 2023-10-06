@@ -55,7 +55,7 @@ For Project 3, you will work with your group to tell a story using data visualiz
 For this project, you can focus your efforts within a specific industry: Finance, Healthcare, Custom.<br>
 
 ## Project Questions
-Here are the questions we are interested in investigating in this project:
+Here are the questions we are investigating in this project:
 <ul>
 <li>
 What are the best places, in general, to retire state?<br>
