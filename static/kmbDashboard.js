@@ -1,3 +1,5 @@
+
+// Constants
 const urlJSONByColumn = '/static/DatasetManipulations/truncated_nursing_df2.json';
 const urlJSONByRow = '/static/DatasetManipulations/truncated_nursing_df2_by_record.json';
 const urlJSONCorrelationsByRow = '/static/DatasetManipulations/correlations_df_by_record.json';
@@ -15,6 +17,7 @@ const listOfTruncatedNursingDataFrameColumns = ['Federal Provider Number', 'Prov
     'Total Number of Penalties', 'Location', 'Processing Date', 'Latitude',
     'Adjusted Total Nurse Staffing Hours per Resident per Day', 'Longitude'];
 
+// Declared Variables
 let dropDownMenuValue;
 let categoryCount = 0;
 let categoryPanelList = [];
@@ -23,20 +26,159 @@ let listOfWeightedCategories;
 let doughnutChartWeightedTotals;
 let correleationsCategoryChart;
 let groupCategoryWeightsChart;
+let alreadyPopulated = false;
 
 
-// Global letiable to hold a deep copy of retrieved data
+// Global variables to hold a deep copy of retrieved data
 let dataByColumn = null;
 let dataByRow = null;
 let correlationsByRow = null;
-
-let alreadyPopulated = false;
-
 let topXRecords = [];
 let topXRecordColumns = [];
 
 
+// Calculations ****************************
+function isDollarAmount(value) {
+    const regex = /^\$\d+(\.\d{2})?$/;
+    return regex.test(value);
+}
 
+
+// Calculate Weighted Totals and check if the values can converted to numerical values eg
+// the 'TX' is not converted but the value '$5.87' is converted
+function getWeightedTotals(listOfWeightedCategories, dataColumns, recordSpecificWeightTypes) {
+    let recordIndicesAndWeights = {};
+
+    if (dataColumns != null) {
+        for (let i = 0; i < Object.keys(dataColumns['Federal Provider Number']).length; i++) {
+            let totalRecordWeight = 0;
+
+            for (let j = 0; j < listOfWeightedCategories.length; j++) {
+                if (listOfWeightedCategories[j]['range_All'] == 'range') {
+                    if (dataColumns[listOfWeightedCategories[j]['category']][i] && String(dataColumns[listOfWeightedCategories[j]['category']][i])) {//check if not null
+                        if (isDollarAmount(dataColumns[listOfWeightedCategories[j]['category']][i])) {
+                            if (recordSpecificWeightTypes) {
+                                listOfWeightedCategories[j]['topXWeightedValues'].push(parseFloat(dataColumns[listOfWeightedCategories[j]['category']][i].replace('$', "")) * parseFloat(listOfWeightedCategories[j]['weight']));
+                            } else {
+                                totalRecordWeight += parseFloat(dataColumns[listOfWeightedCategories[j]['category']][i].replace('$', "")) * parseFloat(listOfWeightedCategories[j]['weight']);
+                            }
+                        } else {
+                            if (recordSpecificWeightTypes) {
+                                listOfWeightedCategories[j]['topXWeightedValues'].push(parseFloat(dataColumns[listOfWeightedCategories[j]['category']][i]) * parseFloat(listOfWeightedCategories[j]['weight']));
+                            } else {
+                                totalRecordWeight += parseFloat(dataColumns[listOfWeightedCategories[j]['category']][i]) * parseFloat(listOfWeightedCategories[j]['weight']);
+                            }
+                        }
+                    }
+                } else {
+                    if (String(dataColumns[listOfWeightedCategories[j]['category']][i]) == String(listOfWeightedCategories[j]['value'])) {
+
+                        if (recordSpecificWeightTypes) {
+                            listOfWeightedCategories[j]['topXWeightedValues'].push(parseFloat(listOfWeightedCategories[j]['weight']));
+                        } else {
+                            totalRecordWeight += parseFloat(listOfWeightedCategories[j]['weight']);
+                        }
+                    }
+                }
+            }
+            recordIndicesAndWeights[i] = totalRecordWeight;
+        }
+    }
+    return recordIndicesAndWeights;
+}
+
+
+// Get Records by Indices
+function getRecordsByIndices(indicesAndTotalsForTopX) {
+    topXRecords = [];
+    topXRecordColumns['totalWeightedScore'] = [];
+    topXRecordColumns['index'] = [];
+    for (let h = 0; h < listOfTruncatedNursingDataFrameColumns.length; h++) {
+        topXRecordColumns[listOfTruncatedNursingDataFrameColumns[h]] = [];
+    }
+    if (dataByColumn) {
+        for (let i = 0; i < indicesAndTotalsForTopX.length; i++) {
+            let recordDict = {};
+            let index = parseInt(indicesAndTotalsForTopX[i][0]);
+            let totalWeight = indicesAndTotalsForTopX[i][1];
+            recordDict['index'] = index;
+            topXRecordColumns['index'].push(index);
+            recordDict['totalWeightedScore'] = totalWeight;
+            topXRecordColumns['totalWeightedScore'].push(totalWeight);
+            for (let j = 0; j < listOfTruncatedNursingDataFrameColumns.length; j++) {
+                recordDict[listOfTruncatedNursingDataFrameColumns[j]] = dataByColumn[listOfTruncatedNursingDataFrameColumns[j]][index];
+                topXRecordColumns[listOfTruncatedNursingDataFrameColumns[j]].push(dataByColumn[listOfTruncatedNursingDataFrameColumns[j]][index]);
+            }
+            topXRecords.push(recordDict);
+        }
+    }
+
+    console.log(topXRecordColumns);
+    console.log(JSON.stringify(topXRecordColumns));
+    console.log(topXRecords);
+    console.log(JSON.stringify(topXRecords));
+
+    // This adds totals of topX records to listOfWeightedCategories
+    getWeightedTotals(listOfWeightedCategories, topXRecordColumns, true);
+}
+
+
+// General Method for Calculating Weighted Totals
+function calculateTotalWeight() {
+    let topXValue = getRadioButtonSelection('topX');
+    // console.log(`topXValue: ${topXValue}`);
+    listOfWeightedCategories = [];
+    for (let i = 0; i < categoryPanelList.length; i++) {
+        let categoryNumber = categoryPanelList[i];
+        let catDict = {};
+        let categoryId = 'selDataset' + (categoryNumber * 2);
+        let valueId = 'selDataset' + (categoryNumber * 2 + 1);
+        let weightId = 'numberInput' + (categoryNumber);
+
+        let category_value = document.getElementById(categoryId).value;
+        let value_value = document.getElementById(valueId).value;
+        let weight_value = document.getElementById(weightId).value;
+
+        catDict["category"] = category_value;
+        catDict["value"] = value_value;
+        catDict['range_All'] = getRadioButtonSelection(`rangeAllOrNothing${categoryNumber}`);
+        catDict['weight'] = weight_value;
+        catDict['topXWeightedValues'] = [];
+        console.log(`document.getElementById(\`range\${categoryNumber}\`): ${document.getElementById(`range${categoryNumber}`)}`);
+        catDict['isTreatableAsANumber'] = !(document.getElementById(`range${categoryNumber}`).disabled);
+        listOfWeightedCategories.push(catDict);
+    }
+    console.log(`listOfWeightedCategories: ${JSON.stringify(listOfWeightedCategories, null, 2)}`);
+
+    dictRecordIndexAndWeightedTotal = getWeightedTotals(listOfWeightedCategories, dataByColumn, false);
+    // console.log(`dictRecordIndexAndWeightedTotal: ${JSON.stringify(dictRecordIndexAndWeightedTotal, null, 2)}`);
+
+    let sortedByValues = structuredClone(dictRecordIndexAndWeightedTotal);
+    let entries = Object.entries(sortedByValues);
+    let sortedArray = entries.sort(([, a], [, b]) => b - a);
+    let sortedMap = new Map(sortedArray);
+    // console.log('222999999999999999999');
+    let sorted2DArray = [...sortedMap];
+
+    // console.log(sorted2DArray);
+    let count = 0;
+    let topXIndicesAndTotalList = [];
+    while (count < sorted2DArray.length && topXIndicesAndTotalList.length < topXValue){
+        if (!Number.isNaN(sorted2DArray[count][1])){
+            topXIndicesAndTotalList.push(sorted2DArray[count]);
+        }
+        count += 1;
+    }
+    let indicesAndTotalsForTopX = topXIndicesAndTotalList;
+    // console.log(indicesAndTotalsForTopX);
+    getRecordsByIndices(indicesAndTotalsForTopX);
+
+}
+
+
+// HMTL Manipulations ************************
+// Disables the range button when a value like 'TX' is not a conveniently
+// convertable to a number like '$27.01'
 function disableRadioButton(disableIt, buttonId) {
     let radioButton = document.getElementById(buttonId);
     radioButton.disabled = disableIt;
@@ -49,11 +191,8 @@ function disableRadioButton(disableIt, buttonId) {
     }
 }
 
-function isDollarAmount(value) {
-    const regex = /^\$\d+(\.\d{2})?$/;
-    return regex.test(value);
-}
-
+// Populates the Values selection dropdown menu and orders them if they 
+// are numbers
 function populateValuesOfCategory(selectId) {
     let numStr = selectId.substring('selDataset'.length);
     let valueIdNum = parseInt(numStr) + 1;
@@ -62,16 +201,7 @@ function populateValuesOfCategory(selectId) {
 
     let category_key = document.getElementById(selectId).value;
 
-
-
-    // console.log(`category_key: ${category_key}`);
-    // console.log(`category_key.value: ${category_key.value}`);
-    // console.log(category_key.value);
-    // let keys = Object.keys(data1);
-    // console.log('hi');
-
-
-    let selectElement = dropDownMenuValue.node(); // Get the actual DOM element
+    let selectElement = dropDownMenuValue.node();
 
     if (selectElement && selectElement.options && selectElement.options.length > 0) {
         selectElement.options.length = 0;
@@ -107,31 +237,23 @@ function populateValuesOfCategory(selectId) {
             disableRadioButton(true, `range${parseInt(numStr) / 2}`);
         }
 
-
-        // console.log(dropDownMenuValue);
-
         let sortedByValues = structuredClone(result);
         let entries = Object.entries(sortedByValues);
         let sortedArray = entries.sort(([, a], [, b]) => a - b);
         let sortedMap = new Map(sortedArray);
-        // console.log('222999999999999999999');
         let sorted2DArray = [...sortedMap];
 
         for (let i = 0; i < sorted2DArray.length; i++) {
             let option1 = dropDownMenuValue.append('option').text(sorted2DArray[i][1]);
             option1.attr('value', sorted2DArray[i][1]);
         }
-        // alreadyPopulated = true;
     }
 
 }
 
 
-function validateInput(event) {
-    let inputField = document.getElementById(event.target.id);
-    inputField.value = inputField.value.replace(/[^-0-9.]/g, '').replace(/(\..*)\./g, '$1');
-}
-
+// In case the user pastes into the textfield it, the textfield only allows for
+// positive and negative numbers
 function validatePaste(e) {
     let pastedText = e.clipboardData.getData('text');
     if (/[^-0-9.]/.test(pastedText) || (/\./.test(pastedText) && pastedText.match(/\./g).length > 1)) {
@@ -141,6 +263,14 @@ function validatePaste(e) {
 }
 
 
+// Checks if the value entered via keyboard is regex 
+function validateInput(event) {
+    let inputField = document.getElementById(event.target.id);
+    inputField.value = inputField.value.replace(/[^-0-9.]/g, '').replace(/(\..*)\./g, '$1');
+}
+
+
+// Populates the Category Selection Dropdown menu
 function populateCategoryPanel(selDatasetId) {
     let dropDownMenu = d3.select(`#${selDatasetId}`);
     if (dataByColumn != null) {
@@ -149,182 +279,192 @@ function populateCategoryPanel(selDatasetId) {
             let option1 = dropDownMenu.append('option').text(key);
             option1.attr('value', key);
         });
-        // console.log('**************');
-        // console.log(data['Federal Provider Number']);
     }
 }
 
 
+// Action For all the buttons; Add Category Button, Calculate Total button
+function buttonClicked(button) {
+    if (button == 'addCategory') {
+        addCategoryPanel();
+
+        populateCategoryPanel(`selDataset${(categoryCount - 1) * 2}`);
+        populateValuesOfCategory(`selDataset${(categoryCount - 1) * 2}`);
+    } else if (button == 'calculateTotal') {
+
+        listOfWeightedCategories = [];
+        calculateTotalWeight();
+        createWeightedMap();
+        createBarChart();
+        createCategoryChart();
+        createDoughnutChart();
+        createCorrelationsChart();
+
+
+    } else if (button.includes('removeCategoryButton')) {
+        removeCategoryButton(button);
+    }
+}
+
+
+// Removes a Category Panel
+function removeCategoryButton(button) {
+    let categoryElementIdNumber = button.replace('removeCategoryButton', '');
+    d3.select(`#category${categoryElementIdNumber}`).remove();
+    let indexOfCategoryElementToRemove = categoryPanelList.indexOf(parseInt(categoryElementIdNumber));
+    categoryPanelList.splice(indexOfCategoryElementToRemove, 1);
+}
+
+
+// Prevents Flagging of of the Weight textfield
+function optionChangedValue(value_key) {
+    // pass
+}
+
+
+// Fucntion to be called every time a new id is selected from the dropdown menu. When this funciton
+// is called it executes the process that displays the data for the new person selected.
+function optionChangedCategory(category_key) {
+    if (dataByColumn != null) {
+
+        let selectElement = category_key.target;
+        populateValuesOfCategory(selectElement.id);
+    }
+}
+
+
+// Return the value of the radio button selected
 function getRadioButtonSelection(name1) {
     let selectedButton = document.querySelector(`input[name="${name1}"]:checked`).value;
     return selectedButton;
 }
 
 
-function getAllOrNothingRecords(l1ListOfWeightedCategories) {
-    let listOfAllOrNothingCatAndValue = [];
-    for (let i = 0; i < l1ListOfWeightedCategories.length; i++) {
-        if (l1ListOfWeightedCategories[i]['range_All'] == 'all') {
-            listOfAllOrNothingCatAndValue.push(l1ListOfWeightedCategories[i]);
-        }
-    }
-    let setOfRecordIndices = new Set();
-    for (let i = 0; i < listOfAllOrNothingCatAndValue.length; i++) {
-        let category = listOfAllOrNothingCatAndValue[i]['category'];
-        let value = listOfAllOrNothingCatAndValue[i]['value'];
-        // console.log(`value: ${value}`);
-        // console.log(`category: ${category}`);
-        // console.log(`data[category][0]: ${data[category][0]}`);
-        // console.log(`Object.keys(data[category]).length: ${Object.keys(data[category]).length}`);
-        for (let j = 0; j < Object.keys(dataByColumn[category]).length; j++) {
-            if (dataByColumn[category][j] == value) {
-                setOfRecordIndices.add(j);
-            }
-        }
-    }
-    // console.log('done getting the set');
-    return setOfRecordIndices;
+// Adds the 'Add Category' and 'Calculate Total'
+function addButtons() {
+    let lowerDiv = d3.select('#lowerDiv');
+    let buttonDiv = lowerDiv.append('div');
+    buttonDiv.attr('class', 'col-md-6');
+    buttonDiv.attr('style', "margin-top: 10px !important;");
+    buttonDiv.attr('id', 'addCalcButtonDiv');
+
+    let buttonContainer = d3.select('#addCalcButtonDiv').append('div');
+    buttonContainer.attr('id', 'addCalcButtonContainer');
+
+    let addCalcButtonContainer = d3.select('#addCalcButtonContainer');
+    let addButton = addCalcButtonContainer.append('button');
+    addButton.attr('id', 'addCategory');
+    addButton.attr('style', 'margin: 0px 6px 14px 2px; box-shadow: 0px 3px 4px 0px;');
+    addButton.attr('onclick', 'buttonClicked("addCategory")');
+    addButton.html('Add Category');
+
+    let calcButton = addCalcButtonContainer.append('button');
+    calcButton.attr('id', 'calculateTotal');
+    calcButton.attr('style', 'margin: 0px 6px 14px 2px; box-shadow: 0px 3px 4px 0px;');
+    calcButton.attr('onclick', 'buttonClicked("calculateTotal")');
+    calcButton.html('Calculate Total');
+}
+
+// Adds another category panel with 2 selectors, 2 radio buttons, and a textfield
+function addCategoryPanel() {
+    let categoryDiv = d3.select('#categories').append('div');
+    categoryDiv.attr('class', 'col-md-12 category');
+    categoryDiv.attr('style', `margin: 4px 0px;`);
+
+    categoryDiv.attr('id', `category${categoryCount}`);
+
+    let subcategoryDiv = d3.select(`#category${categoryCount}`).append('div');
+    subcategoryDiv.attr('class', 'well');
+    subcategoryDiv.attr('id', `subcategory${categoryCount}`);
+    subcategoryDiv.attr('style', "box-shadow: 0px 3px 4px; ");
+
+    let subcategoryDivContainer = d3.select(`#subcategory${categoryCount}`);
+    let removeCategoryButton = subcategoryDivContainer.append('button');
+    removeCategoryButton.attr('id', `removeCategoryButton${categoryCount}`);
+    removeCategoryButton.attr('style', 'position: relative; left: 95%; top: 0px; margin-top: 0px; box-shadow: 0px .5px 1px 0px; font-size: .8rem;'); //border: 1px solid #000;')
+    removeCategoryButton.attr('onclick', `buttonClicked("removeCategoryButton${categoryCount}")`);
+    removeCategoryButton.html('X');
+
+    let form = subcategoryDivContainer.append('form');
+    form.attr('id', `form${categoryCount}`);
+    document.getElementById(`form${categoryCount}`).addEventListener("submit", function (e) {
+        e.preventDefault();
+    });
+
+    let hCat = form.append('h4');
+    hCat.html('Category:');
+    hCat.attr('style', 'font-weight: 600;')
+    
+    let select1 = form.append('select');
+    select1.attr('id', `selDataset${categoryCount * 2}`);
+    select1.attr('onchange', "optionChangedCategory(event)");
+
+    form.append('br');
+
+    let hValue = form.append('h5');
+    hValue.attr('style', 'font-weight: 600;')
+    hValue.html('Value:');
+
+    let select2 = form.append('select');
+    select2.attr('id', `selDataset${categoryCount * 2 + 1}`);
+    select2.attr('onchange', "optionChangedValue(event)");
+
+    form.append('br');
+
+    let label3 = form.append('label')
+    label3.attr('style', "margin-top: 10px; font-size: 10px;");
+    label3.html('Value as range: &lpar; value X weight &rpar;');
+
+    let input3 = form.append('input');
+    input3.attr('type', 'radio');
+    input3.attr('style', 'margin-left: 4px;');
+    input3.attr('id', `range${categoryCount}`);
+    input3.attr('name', `rangeAllOrNothing${categoryCount}`);
+    input3.attr('value', 'range');
+    input3.property('checked', true);
+
+    form.append('br');
+
+    let label4 = form.append('label')
+    label4.attr('style', "font-size: 10px;");
+    label4.html('&emsp;Value as All-Or-Nothing: &lpar; value/value X weight &rpar;');
+
+    let input4 = form.append('input');
+    input4.attr('type', 'radio');
+    input4.attr('style', 'margin-left: 4px;');
+    input4.attr('id', `all${categoryCount}`);
+    input4.attr('name', `rangeAllOrNothing${categoryCount}`);
+    input4.attr('value', 'all');
+
+    form.append('br');
+
+    let label5 = form.append('label')
+    label5.attr('style', "font-size: 16px; margin-right: 4px;");
+    label5.html('Weight: ');
+
+    let input5 = form.append('input');
+    input5.attr('type', 'text');
+    input5.attr('id', `numberInput${categoryCount}`);
+    input5.attr('oninput', "validateInput(event)");
+    input5.attr('onpaste', "return validatePaste(event)");
+
+    categoryPanelList.push(categoryCount);
+    categoryCount += 1;
 }
 
 
-function getWeightedTotals(listOfWeightedCategories, dataColumns, recordSpecificWeightTypes) {
-    let recordIndicesAndWeights = {};
 
-    if (dataColumns != null) {
-        for (let i = 0; i < Object.keys(dataColumns['Federal Provider Number']).length; i++) {
-            let totalRecordWeight = 0;
-
-            for (let j = 0; j < listOfWeightedCategories.length; j++) {
-                if (listOfWeightedCategories[j]['range_All'] == 'range') {
-                    // console.log(`data[listOfWeightedCategories[j]['category']][${i}]): ${data[listOfWeightedCategories[j]['category']][i]}`);
-                    // console.log(`parseFloat(data[listOfWeightedCategories[j]['category']][${i}]): ${parseFloat(data[listOfWeightedCategories[j]['category']][i])}`);
-                    // console.log(`parseInt(listOfWeightedCategories[${j}]['weight']): ${parseFloat(listOfWeightedCategories[j]['weight'])}`);
-                    if (dataColumns[listOfWeightedCategories[j]['category']][i] && String(dataColumns[listOfWeightedCategories[j]['category']][i])) {//check if not null
-                        if (isDollarAmount(dataColumns[listOfWeightedCategories[j]['category']][i])) {
-                            if (recordSpecificWeightTypes) {
-                                listOfWeightedCategories[j]['topXWeightedValues'].push(parseFloat(dataColumns[listOfWeightedCategories[j]['category']][i].replace('$', "")) * parseFloat(listOfWeightedCategories[j]['weight']));
-                            } else {
-                                totalRecordWeight += parseFloat(dataColumns[listOfWeightedCategories[j]['category']][i].replace('$', "")) * parseFloat(listOfWeightedCategories[j]['weight']);
-                            }
-                        } else {
-                            if (recordSpecificWeightTypes) {
-                                listOfWeightedCategories[j]['topXWeightedValues'].push(parseFloat(dataColumns[listOfWeightedCategories[j]['category']][i]) * parseFloat(listOfWeightedCategories[j]['weight']));
-                            } else {
-                                totalRecordWeight += parseFloat(dataColumns[listOfWeightedCategories[j]['category']][i]) * parseFloat(listOfWeightedCategories[j]['weight']);
-                            }
-                        }
-                    }
-                } else {
-                    if (String(dataColumns[listOfWeightedCategories[j]['category']][i]) == String(listOfWeightedCategories[j]['value'])) {
-
-                        if (recordSpecificWeightTypes) {
-                            // console.log(`listOfWeightedCategories[j]['totalWeightedScore']: ${listOfWeightedCategories[j]['totalWeightedScore']}`);
-
-                            listOfWeightedCategories[j]['topXWeightedValues'].push(parseFloat(listOfWeightedCategories[j]['weight']));
-                        } else {
-                            totalRecordWeight += parseFloat(listOfWeightedCategories[j]['weight']);
-                        }
-                    }
-                }
-            }
-            recordIndicesAndWeights[i] = totalRecordWeight;
-        }
+// Charts and Visuals **********************
+// Returns an array of rgba strings
+function getColors(numOfColorSteps, seed, alpha) {
+    let colors1 = [];
+    for (let i = 0; i < numOfColorSteps; i++) {
+        colors1.push(getRGBAString(i, Math.random() * seed, alpha));
     }
-    return recordIndicesAndWeights;
+    return colors1;
 }
 
-
-function getRecordsByIndices(indicesAndTotalsForTopX) {
-    topXRecords = [];
-    topXRecordColumns['totalWeightedScore'] = [];
-    topXRecordColumns['index'] = [];
-    for (let h = 0; h < listOfTruncatedNursingDataFrameColumns.length; h++) {
-        topXRecordColumns[listOfTruncatedNursingDataFrameColumns[h]] = [];
-    }
-    if (dataByColumn) {
-        for (let i = 0; i < indicesAndTotalsForTopX.length; i++) {
-            let recordDict = {};
-            let index = parseInt(indicesAndTotalsForTopX[i][0]);
-            let totalWeight = indicesAndTotalsForTopX[i][1];
-            recordDict['index'] = index;
-            topXRecordColumns['index'].push(index);
-            recordDict['totalWeightedScore'] = totalWeight;
-            topXRecordColumns['totalWeightedScore'].push(totalWeight);
-            for (let j = 0; j < listOfTruncatedNursingDataFrameColumns.length; j++) {
-                recordDict[listOfTruncatedNursingDataFrameColumns[j]] = dataByColumn[listOfTruncatedNursingDataFrameColumns[j]][index];
-                topXRecordColumns[listOfTruncatedNursingDataFrameColumns[j]].push(dataByColumn[listOfTruncatedNursingDataFrameColumns[j]][index]);
-            }
-            topXRecords.push(recordDict);
-        }
-    }
-
-    console.log(topXRecordColumns);
-    console.log(JSON.stringify(topXRecordColumns));
-    console.log(topXRecords);
-    console.log(JSON.stringify(topXRecords));
-
-    // This adds totals of topX records to listOfWeightedCategories
-    getWeightedTotals(listOfWeightedCategories, topXRecordColumns, true);
-}
-
-
-function calculateTotalWeight() {
-    let topXValue = getRadioButtonSelection('topX');
-    // console.log(`topXValue: ${topXValue}`);
-    listOfWeightedCategories = [];
-    for (let i = 0; i < categoryPanelList.length; i++) {
-        let categoryNumber = categoryPanelList[i];
-        let catDict = {};
-        let categoryId = 'selDataset' + (categoryNumber * 2);
-        let valueId = 'selDataset' + (categoryNumber * 2 + 1);
-        let weightId = 'numberInput' + (categoryNumber);
-
-        let category_value = document.getElementById(categoryId).value;
-        let value_value = document.getElementById(valueId).value;
-        let weight_value = document.getElementById(weightId).value;
-
-        catDict["category"] = category_value;
-        catDict["value"] = value_value;
-        catDict['range_All'] = getRadioButtonSelection(`rangeAllOrNothing${categoryNumber}`);
-        catDict['weight'] = weight_value;
-        catDict['topXWeightedValues'] = [];
-        console.log(`document.getElementById(\`range\${categoryNumber}\`): ${document.getElementById(`range${categoryNumber}`)}`);
-        catDict['isTreatableAsANumber'] = !(document.getElementById(`range${categoryNumber}`).disabled);
-        listOfWeightedCategories.push(catDict);
-    }
-    console.log(`listOfWeightedCategories: ${JSON.stringify(listOfWeightedCategories, null, 2)}`);
-
-    // let setOfAllOrNothingRecordIndices = getAllOrNothingRecords(listOfWeightedCategories);
-    // console.log(`listOfAllOrNothingRecords.size${listOfAllOrNothingRecords.size}`);
-    // console.log(`listOfAllOrNothingRecords: ${listOfAllOrNothingRecords}`);
-    // setOfAllOrNothingRecordIndices.forEach(value => console.log(value));
-    // let dictRecordIndexAndWeightedTotal = {};
-    dictRecordIndexAndWeightedTotal = getWeightedTotals(listOfWeightedCategories, dataByColumn, false);
-    // console.log(`dictRecordIndexAndWeightedTotal: ${JSON.stringify(dictRecordIndexAndWeightedTotal, null, 2)}`);
-
-    let sortedByValues = structuredClone(dictRecordIndexAndWeightedTotal);
-    let entries = Object.entries(sortedByValues);
-    let sortedArray = entries.sort(([, a], [, b]) => b - a);
-    let sortedMap = new Map(sortedArray);
-    // console.log('222999999999999999999');
-    let sorted2DArray = [...sortedMap];
-
-    // console.log(sorted2DArray);
-    let count = 0;
-    let topXIndicesAndTotalList = [];
-    while (count < sorted2DArray.length && topXIndicesAndTotalList.length < topXValue){
-        if (!Number.isNaN(sorted2DArray[count][1])){
-            topXIndicesAndTotalList.push(sorted2DArray[count]);
-        }
-        count += 1;
-    }
-    let indicesAndTotalsForTopX = topXIndicesAndTotalList;
-    // console.log(indicesAndTotalsForTopX);
-    getRecordsByIndices(indicesAndTotalsForTopX);
-
-}
-
-
+// Create Bar Chart that shows weighted totals for the topX records
 function createBarChart() {
 
     let maxNameLength = Math.max(...topXRecordColumns['Provider Name'].map(name => name.length));
@@ -374,62 +514,7 @@ function createBarChart() {
     Plotly.newPlot('result', data, layout);
 }
 
-
-function sumArray(arr) {
-    let total = 0;
-    for (let i = 0; i < arr.length; i++) {
-        total += arr[i];
-    }
-    return total;
-}
-
-
-function createDoughnutChart() {
-    let ctx = document.getElementById('categoryDoughnutChart').getContext('2d');
-    let labels = [];
-    let data = [];
-    let backgroundColor = [];
-    let borderColor = [];
-
-    for (let i = 0; i < listOfWeightedCategories.length; i++) {
-        labels.push(listOfWeightedCategories[i]['category']);
-        // console.log(`listOfWeightedCategories[i]['topXWeightedValues']: ${listOfWeightedCategories[i]['topXWeightedValues']}`);
-        data.push(listOfWeightedCategories[i]['topXWeightedValues'].reduce((sum, weightedValue) => sum + weightedValue, 0));
-        let weightedValue = data[data.length - 1];
-        // console.log(`weightedValue: ${weightedValue}`);
-        backgroundColor.push(`rgba(${(Math.abs(Math.floor((weightedValue + 333) * 200))) % 256}, ${(Math.abs(Math.floor((weightedValue + 444) * 203))) % 256}, ${(Math.abs(Math.floor((weightedValue + 555) * 207))) % 256}, ${.6})`);
-        borderColor.push(`rgba(${(Math.abs(Math.floor((weightedValue + 111) * 200))) % 256}, ${(Math.abs(Math.floor((weightedValue + 222) * 203))) % 256}, ${(Math.abs(Math.floor((weightedValue + 333) * 207))) % 256}, ${.6})`);
-    }
-
-
-    // console.log(`labels: ${labels}`);
-    // console.log(`data: ${data}`);
-    // console.log(`backgroundColor: ${backgroundColor}`);
-
-    if (doughnutChartWeightedTotals) {
-        doughnutChartWeightedTotals.destroy();
-    }
-
-    doughnutChartWeightedTotals = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: data,
-                backgroundColor: backgroundColor,
-                borderColor: borderColor,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            cutoutPercentage: 50,
-            responsive: true
-        }
-    });
-
-}
-
-
+// Create a Correlation Chart for the Categories that have numbers
 function createCorrelationsChart() {
     let ctx = document.getElementById('correlationsChart').getContext('2d');
     console.log('Inside correlations&&&&&&&&&&');
@@ -506,202 +591,56 @@ function createCorrelationsChart() {
 }
 
 
-function buttonClicked(button) {
-    if (button == 'addCategory') {
-        addCategoryPanel();
+// Create a doughnut chart that shows the percentage of each category when totaled across all
+// the topX records
+function createDoughnutChart() {
+    let ctx = document.getElementById('categoryDoughnutChart').getContext('2d');
+    let labels = [];
+    let data = [];
+    let backgroundColor = [];
+    let borderColor = [];
 
-        populateCategoryPanel(`selDataset${(categoryCount - 1) * 2}`);
-        populateValuesOfCategory(`selDataset${(categoryCount - 1) * 2}`);
-    } else if (button == 'calculateTotal') {
-
-        listOfWeightedCategories = [];
-        calculateTotalWeight();
-        createWeightedMap();
-        createBarChart();
-        createCategoryChart();
-        createDoughnutChart();
-        createCorrelationsChart();
-
-
-    } else if (button.includes('removeCategoryButton')) {
-        removeCategoryButton(button);
+    for (let i = 0; i < listOfWeightedCategories.length; i++) {
+        labels.push(listOfWeightedCategories[i]['category']);
+        // console.log(`listOfWeightedCategories[i]['topXWeightedValues']: ${listOfWeightedCategories[i]['topXWeightedValues']}`);
+        data.push(listOfWeightedCategories[i]['topXWeightedValues'].reduce((sum, weightedValue) => sum + weightedValue, 0));
+        let weightedValue = data[data.length - 1];
+        // console.log(`weightedValue: ${weightedValue}`);
+        backgroundColor.push(`rgba(${(Math.abs(Math.floor((weightedValue + 333) * 200))) % 256}, ${(Math.abs(Math.floor((weightedValue + 444) * 203))) % 256}, ${(Math.abs(Math.floor((weightedValue + 555) * 207))) % 256}, ${.6})`);
+        borderColor.push(`rgba(${(Math.abs(Math.floor((weightedValue + 111) * 200))) % 256}, ${(Math.abs(Math.floor((weightedValue + 222) * 203))) % 256}, ${(Math.abs(Math.floor((weightedValue + 333) * 207))) % 256}, ${.6})`);
     }
-}
 
 
-function removeCategoryButton(button) {
-    let categoryElementIdNumber = button.replace('removeCategoryButton', '');
-    d3.select(`#category${categoryElementIdNumber}`).remove();
-    let indexOfCategoryElementToRemove = categoryPanelList.indexOf(parseInt(categoryElementIdNumber));
-    // console.log(`categoryPanelList: ${categoryPanelList}`);
-    categoryPanelList.splice(indexOfCategoryElementToRemove, 1);
-    // console.log(`categoryPanelList: ${categoryPanelList}`);
-}
+    // console.log(`labels: ${labels}`);
+    // console.log(`data: ${data}`);
+    // console.log(`backgroundColor: ${backgroundColor}`);
 
-
-function optionChangedValue(value_key) {
-    // console.log('In optionChangedValue');
-}
-
-// Fucntion to be called every time a new id is selected from the dropdown menu. When this funciton
-// is called it executes the process that displays the data for the new person selected.
-function optionChangedCategory(category_key) {
-    if (dataByColumn != null) {
-
-        let selectElement = category_key.target;
-        populateValuesOfCategory(selectElement.id);
+    if (doughnutChartWeightedTotals) {
+        doughnutChartWeightedTotals.destroy();
     }
-}
 
-
-function addButtons() {
-    let lowerDiv = d3.select('#lowerDiv');
-    let buttonDiv = lowerDiv.append('div');
-    buttonDiv.attr('class', 'col-md-6');
-    buttonDiv.attr('style', "margin-top: 10px !important;");
-    buttonDiv.attr('id', 'addCalcButtonDiv');
-
-    let buttonContainer = d3.select('#addCalcButtonDiv').append('div');
-    buttonContainer.attr('id', 'addCalcButtonContainer');
-
-    let addCalcButtonContainer = d3.select('#addCalcButtonContainer');
-    let addButton = addCalcButtonContainer.append('button');
-    addButton.attr('id', 'addCategory');
-    addButton.attr('style', 'margin: 0px 6px 14px 2px; box-shadow: 0px 3px 4px 0px;');
-    addButton.attr('onclick', 'buttonClicked("addCategory")');
-    addButton.html('Add Category');
-
-    let calcButton = addCalcButtonContainer.append('button');
-    calcButton.attr('id', 'calculateTotal');
-    calcButton.attr('style', 'margin: 0px 6px 14px 2px; box-shadow: 0px 3px 4px 0px;');
-    calcButton.attr('onclick', 'buttonClicked("calculateTotal")');
-    calcButton.html('Calculate Total');
-}
-
-
-function addCategoryPanel() {
-    // let categoriesDiv = d3.select('.categories');
-    let categoryDiv = d3.select('#categories').append('div');
-    categoryDiv.attr('class', 'col-md-12 category');
-    categoryDiv.attr('style', `margin: 4px 0px;`);
-
-    categoryDiv.attr('id', `category${categoryCount}`);
-    // categoryDiv.attr('style', 'background-color: green;');
-
-    // categoryDiv.innerHMTL = 'hi';
-
-    let subcategoryDiv = d3.select(`#category${categoryCount}`).append('div');
-    subcategoryDiv.attr('class', 'well');
-    subcategoryDiv.attr('id', `subcategory${categoryCount}`);
-    subcategoryDiv.attr('style', "box-shadow: 0px 3px 4px; ");
-
-    let subcategoryDivContainer = d3.select(`#subcategory${categoryCount}`);
-    let removeCategoryButton = subcategoryDivContainer.append('button');
-    removeCategoryButton.attr('id', `removeCategoryButton${categoryCount}`);
-    removeCategoryButton.attr('style', 'position: relative; left: 95%; top: 0px; margin-top: 0px; box-shadow: 0px .5px 1px 0px; font-size: .8rem;'); //border: 1px solid #000;')
-    removeCategoryButton.attr('onclick', `buttonClicked("removeCategoryButton${categoryCount}")`);
-    removeCategoryButton.html('X');
-
-    let form = subcategoryDivContainer.append('form');
-    form.attr('id', `form${categoryCount}`);
-    document.getElementById(`form${categoryCount}`).addEventListener("submit", function (e) {
-        e.preventDefault();
+    doughnutChartWeightedTotals = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            cutoutPercentage: 50,
+            responsive: true
+        }
     });
 
-
-
-    let hCat = form.append('h4');
-    hCat.html('Category:');
-    hCat.attr('style', 'font-weight: 600;')
-
-    // form.append('br');
-
-    // console.log('%%%%%%%%%%%%%%%%');
-    // console.log(categoryCount);
-    let select1 = form.append('select');
-    select1.attr('id', `selDataset${categoryCount * 2}`);
-    select1.attr('onchange', "optionChangedCategory(event)");
-
-    form.append('br');
-
-    let hValue = form.append('h5');
-    hValue.attr('style', 'font-weight: 600;')
-    hValue.html('Value:');
-
-    let select2 = form.append('select');
-    select2.attr('id', `selDataset${categoryCount * 2 + 1}`);
-    select2.attr('onchange', "optionChangedValue(event)");
-
-    form.append('br');
-
-    let label3 = form.append('label')
-    label3.attr('style', "margin-top: 10px; font-size: 10px;");
-    label3.html('Value as range: &lpar; value X weight &rpar;');
-
-    let input3 = form.append('input');
-    input3.attr('type', 'radio');
-    input3.attr('style', 'margin-left: 4px;');
-    input3.attr('id', `range${categoryCount}`);
-    input3.attr('name', `rangeAllOrNothing${categoryCount}`);
-    input3.attr('value', 'range');
-    input3.property('checked', true);
-
-    // document.getElementById(`range${categoryCount}`).addEventListener("change", function() {
-    //     if (this.checked) {
-    //         document.getElementById(`selDataset${categoryCount * 2 + 1}`).disabled = true;
-    //     }
-    // });
-
-    form.append('br');
-
-    let label4 = form.append('label')
-    label4.attr('style', "font-size: 10px;");
-    label4.html('&emsp;Value as All-Or-Nothing: &lpar; value/value X weight &rpar;');
-
-    let input4 = form.append('input');
-    input4.attr('type', 'radio');
-    input4.attr('style', 'margin-left: 4px;');
-    input4.attr('id', `all${categoryCount}`);
-    input4.attr('name', `rangeAllOrNothing${categoryCount}`);
-    input4.attr('value', 'all');
-
-    // document.getElementById(`all${categoryCount}`).addEventListener("change", function() {
-    //     if (this.checked) {
-    //         document.getElementById(`selDataset${categoryCount * 2 + 1}`).disabled = false;
-    //     }
-    // });
-
-
-
-    form.append('br');
-
-
-    let label5 = form.append('label')
-    label5.attr('style', "font-size: 16px; margin-right: 4px;");
-    label5.html('Weight: ');
-
-    let input5 = form.append('input');
-    input5.attr('type', 'text');
-    input5.attr('id', `numberInput${categoryCount}`);
-    input5.attr('oninput', "validateInput(event)");
-    input5.attr('onpaste', "return validatePaste(event)");
-
-    categoryPanelList.push(categoryCount);
-    // console.log(`categoryPanelList: ${categoryPanelList}`);
-    categoryCount += 1;
-
 }
 
 
-function getColors(numOfColorSteps, seed, alpha) {
-    let colors1 = [];
-    for (let i = 0; i < numOfColorSteps; i++) {
-        colors1.push(getRGBAString(i, Math.random() * seed, alpha));
-    }
-    return colors1;
-}
-
-
+// Create Markers for the leaflet map with a popup showing either the overall rating
+// if it's the opening of the webpage or the total weighted value
 function createMarkers(dataRow, myMap) {
     let features = [];
 
@@ -759,16 +698,9 @@ function createMarkers(dataRow, myMap) {
     }
 
 
-    // console.log(`features:\n${JSON.stringify(features)}`);
     // Create a geoJSON layer to add markers to map.
     L.geoJSON(features, {
 
-        // Use the pointToLayer option of a geoJSON layer to create a 
-        // circleMarker with a radius that's proportional to the 
-        // magnitude of the earthquake and has a color that corresponds 
-        // to a particular depth range (in km). (It also sets an 
-        // opacity, fillOpacity, and wieght that are constant across 
-        // all markers).
         pointToLayer: function (feature, latlng) {
             let ranking = 0;
             let fillColor1 = "";
@@ -778,8 +710,7 @@ function createMarkers(dataRow, myMap) {
             } else {
                 ranking = feature.properties['Overall Rating'];
             }
-            // let magnitude = feature.properties.mag;
-            // console.log(`Math.floor((ranking-distributionMin) * delta): ${Math.floor((ranking - distributionMin) * delta)}`);
+
             let diffMaxMin = distributionMax - distributionMin;
             if (diffMaxMin <= 5) {
                 fillColor1 = colors[Math.floor(5 - (distributionMax - ranking))];
@@ -787,7 +718,6 @@ function createMarkers(dataRow, myMap) {
                 if (ranking == distributionMax) {
                     fillColor1 = colors[colors.length - 1];
                 } else {
-                    // console.log(`Math.floor((ranking - distributionMin) / delta): ${Math.floor((ranking - distributionMin) / delta)}`);
                     fillColor1 = colors[Math.floor((ranking - distributionMin) / delta)];
                 }
             }
@@ -804,22 +734,14 @@ function createMarkers(dataRow, myMap) {
                 color: 'black',
                 weight: .3,
                 fillColor: fillColor1,
-                radius: 5//magnitude * 3 
+                radius: 5//magnitude * 3
             };
             return L.circleMarker(latlng, markerOptions);
         },
 
-        // Use the onEachFeature option of a geoJSON layer to bind a
-        // popup tag/box for each marker that displays the information
-        // specific to that marker such as maginitude, depth, location,
-        // place, and time.
+        
         onEachFeature: function (feature, layer) {
-            // let depth = feature.geometry.coordinates[2];
             let latLng = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
-            // let magnitude = feature.properties.mag;
-            // let place = feature.properties.place;
-            // let time = feature.properties.time;
-
 
             if ('totalWeightedScore' in feature.properties) {
                 layer.bindPopup(`<span style='font-size: 14px;'><strong>${feature.properties['Provider Name']}:<br>${feature.properties['Provider City']}, ${feature.properties['Provider State']}</strong><hr>Latitude: ${latLng[0].toFixed(3)}, Longitude: ${latLng[1].toFixed(3)}<br>Total Weighted Score: ${feature.properties['totalWeightedScore'].toFixed(3)}</span>`).addTo(myMap);
@@ -830,7 +752,7 @@ function createMarkers(dataRow, myMap) {
     }).addTo(myMap);
 }
 
-
+// Removes markers on map in preparation for new ones
 function removeAllMapMarkers() {
     console.log('removing markers');
     myMap.eachLayer(function (layer) {
@@ -847,13 +769,15 @@ function removeAllMapMarkers() {
 }
 
 
-
+// Creates the weighted map
 function createWeightedMap() {
     removeAllMapMarkers();
     createMarkers(topXRecords, myMap);
 
 }
 
+
+// Creates the legend
 function createLegend(myMap, legendLabels, legendTitle) {
     // Create L.Control object for the legend
     let legend = L.control({ position: 'bottomright' });
@@ -892,6 +816,7 @@ function createLegend(myMap, legendLabels, legendTitle) {
 }
 
 
+// Create leaflet map given data a legend title and step labels for the legend
 function createMap(dataRows, legendTitle, stepLabels) {
     // console.log(`dataRows: \n${dataRows}`);
     let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -920,6 +845,8 @@ function getRGBAString(value, initialSeed, alpha) {
 }
 
 
+// Create Category Chart that shows a breakdown of the weighted total for
+// each category for each retirement home
 function createCategoryChart() {
 
     // console.log('1');
@@ -931,52 +858,39 @@ function createCategoryChart() {
             type: 'bar',
             opacity: 0.6,
             marker: {
-                color: getRGBAString(h, h + 390, 0.7),  // Bar values
+                color: getRGBAString(h, h + 390, 0.7),
                 line: {
                     color: getRGBAString(h, h + 390, 1),
-                }  // Using the Viridis color scale
+                }
             }
         };
         let x = topXRecordColumns['Provider Name'];
         trace['x'] = x;
         let category = listOfWeightedCategories[h].category;
-        // console.log('2');
         trace['name'] = category;
-        // console.log(JSON.stringify(trace));
-        // break;
         let y = [];
         let text = [];
         for (let i = 0; i < topXRecords.length; i++) {
             let value = topXRecordColumns[category][i];
             text.push(`Value: ${value}`);
-            // console.log('2');
-            // console.log(`value: ${value}`);
             let range_all = listOfWeightedCategories[h].range_All;
-            // console.log(`listOfWeightedCategories[h].range_All: ${listOfWeightedCategories[h].range_All}`);
             if (range_all == 'range') {
-                // console.log('5');
 
                 y.push(parseFloat(value) * parseFloat(listOfWeightedCategories[h].weight));
             } else if (String(value) == String(listOfWeightedCategories[h].value)) {
-                // console.log('6');
                 y.push(parseFloat(listOfWeightedCategories[h].weight));
             } else {
-                // console.log('7');
                 y.push(0);
             }
         }
         trace['y'] = y;
         trace['text'] = text;
         console.log(JSON.stringify(trace));
-        // break;
         arrOfTraces.push(trace);
     }
     console.log(JSON.stringify(arrOfTraces));
 
 
-    // let data = [trace1, trace2];
-
-    // Layout settings
     let layout = {
         title: 'Category Weight Contribution By Provider',
         barmode: 'group',
@@ -993,20 +907,13 @@ function createCategoryChart() {
 }
 
 
-
-
-
-
-
-
+// Importing Data *********************
+// Get Correlation data from general data for correlation charts
 d3.json(urlJSONCorrelationsByRow).then(function (correlationsData) {
     correlationsByRow = structuredClone(correlationsData);
-}
+});
 
-);
-
-
-
+// Get retirement home data by Row (record)
 d3.json(urlJSONByRow).then(function (dataRows) {
     dataByRow = structuredClone(dataRows);
     console.log('Data by Row: ');
@@ -1015,6 +922,7 @@ d3.json(urlJSONByRow).then(function (dataRows) {
 
 });
 
+// Get retirement home data by Column (record)
 d3.json(urlJSONByColumn).then(function (dataColumns) {
     dataByColumn = structuredClone(dataColumns);
     // console.log(bootstrap.Tooltip.VERSION);
