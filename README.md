@@ -54,23 +54,32 @@ For Project 3, you will work with your group to tell a story using data visualiz
 </ul>
 For this project, you can focus your efforts within a specific industry: Finance, Healthcare, Custom.<br>
 
-## Project Question/Goals
-Create a story with three views.<br><br>
-What are the best places to retire in each state?<br>
+## Project Questions
+Here are the questions we are interested in investigating in this project:
 <ul>
 <li>
-    An overview to see the count of the total number of 5-star rated nursing homes per state. This would be the first step in order to narrow down search parameters to a specific state or list of states.
+What are the best places, in general, to retire state?<br>
 </li>
 <li>
-    An interactive map to explore the dataset by using filters for location and overall rating.
+What are the best retirement homes for ME specifically?
+</li>
+<li>
+Where are potential regions to consider for building quality retirement communities, especially in areas that aren't currently ideal for retirees?
+</li>
+<li>
+Which retirement areas are known for mild weather and minimal occurrences of flu?
+</li>
+<li>
+Where can retirees find cost-effective living conditions?
+</li>
+<li>
+Are medical facilities easily accessible in these areas?
+</li>
+<li>
+What's the safety profile of these neighborhoods?
 </li>
 </ul>
-What are the best retirement homes for you specifically?
-<ul>
-<li>
-    An interactive dashboard that allows you to fine-tune your search for a more perfect match for retirement with a weighted priority search that takes seconds to personalize to your needs and desires.
-    </li>
-</ul>
+
 
 ## Javascript Libraries used
 <ol>
@@ -378,12 +387,47 @@ So, the dashboard, with its 29 categories, can cater to all sorts of varying opi
 ---
 ## Conclusion
 
-All three interactive visualization pages will allow the user to help narrow down their search in Retirement Homes based on numerous criteria pertaining to their individual needs and wants. The overview and the interactive maps give a bird's eye view of all the states by the overall rating of the retirement homes there to answer the question,  "What are the best places to retire in each state in general?", for someone who doesn't have time to look into the details. And, on the other hand, the interactive dashboard fine-tunes the search to the particulars of the individual's tastes and answers the question, "What are the best retirement homes for ME specifically?"
+All three interactive visualization pages will allow the user to help narrow down their search in Retirement Homes based on numerous criteria pertaining to their individual needs and wants.* Reviewing the following project questions:
+<ol>
+<li>
+What are the best places, in general, to retire state?<br>
+</li>
+<li>
+What are the best retirement homes for ME specifically?
+</li>
+<li>
+Where are potential regions to consider for building quality retirement communities, especially in areas that aren't currently ideal for retirees?
+</li>
+<li>
+Which retirement areas are known for mild weather and minimal occurrences of flu?
+</li>
+<li>
+Where can retirees find cost-effective living conditions?
+</li>
+<li>
+Are medical facilities easily accessible in these areas?
+</li>
+<li>
+What's the safety profile of these neighborhoods?
+</li>
+</ol>
+The first two were well addressed by the project.*
+<ul>
+<li>
+What are the best places, in general, to retire state?<br>The overview showed that California, Ohio, and Texas had the most number of 5-star overall ratings for retirement homes, so, these were the winners for anyone who didn't have time to investigate deeply into what his/her priorities are for a retirement home.
+</li>
+<li>
+What are the best retirement homes for ME specifically?<br>The interactive dashboard that allows you to fine-tune your search (based on 29 dimensions), for a more perfect match for retirement with a weighted priority search that takes minutes to personalize to your needs and wants answers the question. And the answer is dependent upon how you weight your priorities (e.g. whether you value location like a specific state for the tax structure, a specific city for family and friend connections or RN Staffing rating).
+</li>
+</ul>
+The 3rd was partially addressed.<br>
+<ul>
+<li>
+Where are potential regions to consider for building quality retirement communities, especially in areas that aren't currently ideal for retirees?<br>By setting the selections to 1 on the interactive map for overall rating and looking nationwide, one who is looking for a state of general focus to invest in could find the state with the most densely marked collection of 1-star (meaning a very poor rating) and then conclude that he/she should investigate further to what the 1 star per capita is in the aging population there is (however this will require other datasets).
+</li>
+</ul>
 
+The last 4 questions to answer could be part of future investigations when more time permits to delve into other datasets such as CDC datasets for disease spread, openweather.org datasets for weather data, purchasing-power datasets for cost-effective living, mapping APIs for access to locations of nearby healthcare centers, and crime statistics datasets for neighborhood safety. 
 
-
-
-
-
-        
+*<sub style='font-size: 10;'>The first 3 questions were well addressed with the caveat that there wasn't a prioritization of information of the dataset types that weren't included in this retirement home dataset (e.g. CDC datasets, openweather.org datasets, purchasing-power datasets, ... etc.).</sub>
                 
