@@ -37,15 +37,15 @@ let topXRecords = [];
 let topXRecordColumns = [];
 
 // Database ***********************************
-const { Client } = require('pg');
+// const { Client } = require('pg');
 
-const client = new Client({
-    host: 'localhost',
-    port: 5432,
-    user: 'your_username',
-    password: 'your_password',
-    database: 'your_database'
-});
+// const client = new Client({
+//     host: 'localhost',
+//     port: 5432,
+//     user: 'your_username',
+//     password: 'your_password',
+//     database: 'your_database'
+// });
 
 
 // Calculations ****************************
