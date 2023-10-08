@@ -1,0 +1,15 @@
+{
+  "name": "alternatebestretirement",
+  "version": "1.0.0",
+  "description": "Karoly Burgyan<br>\r Thanh Le Dinh<br>\r Shayla Badeaux<br>\r Maria Paula Parra<br>\r Christian Cantu<br>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pg": "^8.11.3"
+  }
+}
