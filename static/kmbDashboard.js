@@ -87,24 +87,24 @@ async function createTables() {
             );
         `);
 
-        // // Create performance_table
-        // await client.query(`
-        //     CREATE TABLE performance_table (
-        //         most_recent_health_inspection_more_than_2_years_ago VARCHAR(5) NOT NULL,
-        //         overall_rating INT NOT NULL,
-        //         health_inspection_rating INT NOT NULL,
-        //         staffing_rating INT NOT NULL,
-        //         RN_staffing_rating INT NOT NULL,
-        //         total_weighted_health_survey_score NUMERIC(6,6) NOT NULL,
-        //         number_of_facility_reported_incidents INT NOT NULL,
-        //         number_of_substantial_complaints INT NOT NULL,
-        //         number_of_fines INT NOT NULL,
-        //         total_amount_of_fines_in_dollars NUMERIC(10,2) NOT NULL,
-        //         number_of_payment_denials INT NOT NULL,
-        //         total_number_of_penalties INT NOT NULL,
-        //         performance_id INT NOT NULL PRIMARY KEY
-        //     );
-        // `);
+        // Create performance_table
+        await client.query(`
+            CREATE TABLE performance_table (
+                most_recent_health_inspection_more_than_2_years_ago VARCHAR(5) NOT NULL,
+                overall_rating INT NOT NULL,
+                health_inspection_rating INT NOT NULL,
+                staffing_rating INT NOT NULL,
+                RN_staffing_rating INT NOT NULL,
+                total_weighted_health_survey_score NUMERIC(6,6) NOT NULL,
+                number_of_facility_reported_incidents INT NOT NULL,
+                number_of_substantial_complaints INT NOT NULL,
+                number_of_fines INT NOT NULL,
+                total_amount_of_fines_in_dollars NUMERIC(10,2) NOT NULL,
+                number_of_payment_denials INT NOT NULL,
+                total_number_of_penalties INT NOT NULL,
+                performance_id INT NOT NULL PRIMARY KEY
+            );
+        `);
 
         console.log('Tables created successfully!');
     } catch (err) {

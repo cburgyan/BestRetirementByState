@@ -1,6 +1,74 @@
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, jsonify
+from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL", "postgres://your_local_db_info"
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # silence the deprecation warning
+
+db = SQLAlchemy(app)
+
+
+class Zipcode(db.Model):
+    __tablename__ = "zipcode_table"
+
+    provider_state = db.Column(db.String(2), nullable=False)
+    provider_zip_code = db.Column(db.String(10), primary_key=True)
+
+
+class Performance(db.Model):
+    __tablename__ = "performance_table"
+
+    most_recent_health_inspection_more_than_2_years_ago = db.Column(
+        db.String(5), nullable=False
+    )
+    overall_rating = db.Column(db.Float)
+    health_inspection_rating = db.Column(db.Float)
+    staffing_rating = db.Column(db.Float)
+    RN_staffing_rating = db.Column(db.Float)
+    total_weighted_health_survey_score = db.Column(db.Numeric(10, 3))
+    number_of_facility_reported_incidents = db.Column(db.Integer, nullable=False)
+    number_of_substantial_complaints = db.Column(db.Integer, nullable=False)
+    number_of_fines = db.Column(db.Integer, nullable=False)
+    total_amount_of_fines_in_dollars = db.Column(
+        db.String, nullable=False
+    )  # This could potentially be Numeric/Float type based on the actual data
+    number_of_payment_denials = db.Column(db.Integer, nullable=False)
+    total_number_of_penalties = db.Column(db.Integer, nullable=False)
+    performance_id = db.Column(db.Integer, primary_key=True)
+
+
+class Business(db.Model):
+    __tablename__ = "business_table"
+
+    federal_provider_number = db.Column(db.String, primary_key=True, nullable=False)
+    provider_name = db.Column(db.String(225), nullable=False)
+    provider_city = db.Column(db.String(50), nullable=False)
+    provider_zip_code = db.Column(
+        db.String, db.ForeignKey("zipcode_table.provider_zip_code"), nullable=False
+    )
+    provider_county_name = db.Column(db.String(50), nullable=False)
+    ownership_type = db.Column(db.String(50), nullable=False)
+    number_of_certified_beds = db.Column(db.Integer, nullable=False)
+    number_of_residents_in_certified_beds = db.Column(db.Integer, nullable=False)
+    provider_type = db.Column(db.String(50), nullable=False)
+    provider_resides_in_hopsital = db.Column(db.String(5), nullable=False)
+    automatic_sprinkler_systems_in_all_required_areas = db.Column(
+        db.String(10), nullable=False
+    )
+    location = db.Column(db.String(225), nullable=False)
+    processing_data = db.Column(db.Date, nullable=False)
+    latitude = db.Column(db.Numeric(10, 6), nullable=False)
+    longitude = db.Column(db.Numeric(10, 6), nullable=False)
+    adjusted_total_nurse_staffing_hours_per_resident_per_day = db.Column(
+        db.Numeric(8, 6)
+    )
+    performance_id = db.Column(
+        db.Integer, db.ForeignKey("performance_table.performance_id"), nullable=False
+    )
+
 
 # # Define a route to serve the GeoJSON file
 # # if go the route it will automatically download the geojson file
@@ -17,13 +85,13 @@ app = Flask(__name__)
 # @app.route('/geojson')
 # def geojson():
 #     geojson_filename = 'static/DatasetManipulations/all_nursing_homes.geojson'
-#     return send_file(geojson_filename) 
+#     return send_file(geojson_filename)
 
-# # adding route for 5 stars nursing home 
+# # adding route for 5 stars nursing home
 # @app.route('/mappingjson')
 # def another_geojson():
 #     geojson_filename2 = 'static/DatasetManipulations/mapping.json'
-#     return send_file(geojson_filename2) 
+#     return send_file(geojson_filename2)
 
 # # Define routes for your existing pages
 # @app.route('/')
@@ -34,9 +102,144 @@ app = Flask(__name__)
 # def maps():
 #     return render_template("homesInMaps.html")
 
-@app.route('/')
+@app.route('/get_data_by_column')
+def get_data():
+
+    # Use SQLAlchemy's join functionality to get the combined data
+    results = db.session.query(
+        Business, Zipcode, Performance
+    ).join(
+        Zipcode, Business.provider_zip_code == Zipcode.provider_zip_code
+    ).join(
+        Performance, Business.performance_id == Performance.performance_id
+    ).all()
+
+    # Create dictionaries for each table/column
+    business_data = {
+        'federal_provider_number': [],
+        'provider_name': [],
+        'provider_city': [],
+        'provider_zip_code': [],
+        'provider_county_name': [],
+        'ownership_type': [],
+        'number_of_certified_beds': [],
+        'number_of_residents_in_certified_beds': [],
+        'provider_type': [],
+        'provider_resides_in_hospital': [],
+        'automatic_sprinkler_systems_in_all_required_areas': [],
+        'location': [],
+        'processing_data': [],
+        'latitude': [],
+        'longitude': [],
+        'adjusted_total_nurse_staffing_hours_per_resident_per_day': [],
+        'performance_id': []
+    }
+
+    zipcode_data = {
+        'provider_state': [],
+        'provider_zip_code': []
+    }
+
+    performance_data = {
+        'most_recent_health_inspection_more_than_2_years_ago': [],
+        'overall_rating': [],
+        'health_inspection_rating': [],
+        'staffing_rating': [],
+        'RN_staffing_rating': [],
+        'total_weighted_health_survey_score': [],
+        'number_of_facility_reported_incidents': [],
+        'number_of_substantial_complaints': [],
+        'number_of_fines': [],
+        'total_amount_of_fines_in_dollars': [],
+        'number_of_payment_denials': [],
+        'total_number_of_penalties': [],
+        'performance_id': []
+    }
+
+    for business, zipcode, performance in results:
+        for key in business_data:
+            business_data[key].append(getattr(business, key))
+        for key in zipcode_data:
+            zipcode_data[key].append(getattr(zipcode, key))
+        for key in performance_data:
+            performance_data[key].append(getattr(performance, key))
+
+    combined_data = {**business_data, **zipcode_data, **performance_data}
+
+    # Convert combined_data to a list of dictionaries, where each dictionary represents a column
+    dataByColumn = [{"columnName": key, "values": value} for key, value in combined_data.items()]
+
+    return jsonify(dataByColumn)
+
+
+
+
+
+@app.route("/get_data_by_row")
+def get_data():
+    # Use SQLAlchemy's join functionality to get the combined data
+    results = (
+        db.session.query(Business, Zipcode, Performance)
+        .join(Zipcode, Business.provider_zip_code == Zipcode.provider_zip_code)
+        .join(Performance, Business.performance_id == Performance.performance_id)
+        .all()
+    )
+
+    # Convert results to a list of dictionaries to be JSON serializable
+    data = []
+    for business, zipcode, performance in results:
+        item = {
+            # Business fields
+            "federal_provider_number": business.federal_provider_number,
+            "provider_name": business.provider_name,
+            "provider_city": business.provider_city,
+            "provider_county_name": business.provider_county_name,
+            "ownership_type": business.ownership_type,
+            "number_of_certified_beds": business.number_of_certified_beds,
+            "number_of_residents_in_certified_beds": business.number_of_residents_in_certified_beds,
+            "provider_type": business.provider_type,
+            "provider_resides_in_hospital": business.provider_resides_in_hospital,
+            "automatic_sprinkler_systems_in_all_required_areas": business.automatic_sprinkler_systems_in_all_required_areas,
+            "location": business.location,
+            "processing_date": business.processing_data.strftime("%Y-%m-%d")
+            if business.processing_data
+            else None,  # format date as string
+            "latitude": float(business.latitude),
+            "longitude": float(business.longitude),
+            "adjusted_total_nurse_staffing_hours_per_resident_per_day": float(
+                business.adjusted_total_nurse_staffing_hours_per_resident_per_day
+            ),
+
+            # Zipcode fields
+            "provider_state": zipcode.provider_state,
+            "provider_zip_code": zipcode.provider_zip_code,
+
+            # Performance fields
+            "most_recent_health_inspection_more_than_2_years_ago": performance.most_recent_health_inspection_more_than_2_years_ago,
+            "overall_rating": float(performance.overall_rating),
+            "health_inspection_rating": float(performance.health_inspection_rating),
+            "staffing_rating": float(performance.staffing_rating),
+            "RN_staffing_rating": float(performance.RN_staffing_rating),
+            "total_weighted_health_survey_score": float(
+                performance.total_weighted_health_survey_score
+            ),
+            "number_of_facility_reported_incidents": performance.number_of_facility_reported_incidents,
+            "number_of_substantial_complaints": performance.number_of_substantial_complaints,
+            "number_of_fines": performance.number_of_fines,
+            "total_amount_of_fines_in_dollars": performance.total_amount_of_fines_in_dollars,
+            "number_of_payment_denials": performance.number_of_payment_denials,
+            "total_number_of_penalties": performance.total_number_of_penalties,
+        }
+
+        data.append(item)
+
+    return jsonify(data)
+
+
+@app.route("/")
 def dashboard():
     return render_template("dashboard.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
