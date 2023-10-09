@@ -4,8 +4,9 @@ import os
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL", "postgres://your_local_db_info"
+    "DATABASE_URL", "postgres:// postgres:SER@07smeasrai@localhost:5433/mytestdatabase"
 )
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # silence the deprecation warning
 
 db = SQLAlchemy(app)

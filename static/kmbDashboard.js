@@ -163,8 +163,8 @@ function calculateTotalWeight() {
     // console.log(sorted2DArray);
     let count = 0;
     let topXIndicesAndTotalList = [];
-    while (count < sorted2DArray.length && topXIndicesAndTotalList.length < topXValue){
-        if (!Number.isNaN(sorted2DArray[count][1])){
+    while (count < sorted2DArray.length && topXIndicesAndTotalList.length < topXValue) {
+        if (!Number.isNaN(sorted2DArray[count][1])) {
             topXIndicesAndTotalList.push(sorted2DArray[count]);
         }
         count += 1;
@@ -394,7 +394,7 @@ function addCategoryPanel() {
     let hCat = form.append('h4');
     hCat.html('Category:');
     hCat.attr('style', 'font-weight: 600;')
-    
+
     let select1 = form.append('select');
     select1.attr('id', `selDataset${categoryCount * 2}`);
     select1.attr('onchange', "optionChangedCategory(event)");
@@ -739,7 +739,7 @@ function createMarkers(dataRow, myMap) {
             return L.circleMarker(latlng, markerOptions);
         },
 
-        
+
         onEachFeature: function (feature, layer) {
             let latLng = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
 
@@ -755,13 +755,13 @@ function createMarkers(dataRow, myMap) {
 // Removes markers on map in preparation for new ones
 function removeAllMapMarkers() {
     console.log('removing markers');
-    myMap.eachLayer(function (layer) {
-        if (layer instanceof L.CircleMarker) {
-            myMap.removeLayer(layer);
-            console.log('removing markers');
-            return;
-        }
-    });
+    // myMap.eachLayer(function (layer) {
+    //     if (layer instanceof L.CircleMarker) {
+    //         myMap.removeLayer(layer);
+    //         console.log('removing markers');
+    //         return;
+    //     }
+    // });
     myMap.remove()
     let stepLabels = ['Least', '&emsp;.', '&emsp;.', '&emsp;.', '&emsp;.', 'Greatest'];
     createMap(topXRecords, 'Weighted Total', stepLabels);
@@ -841,7 +841,7 @@ function createMap(dataRows, legendTitle, stepLabels) {
 
 
 function getRGBAString(value, initialSeed, alpha) {
-   return `rgba(${(Math.abs(Math.floor((value + initialSeed + 333) * 200))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 444) * 203))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 555) * 207))) % 256}, ${alpha})`;
+    return `rgba(${(Math.abs(Math.floor((value + initialSeed + 333) * 200))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 444) * 203))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 555) * 207))) % 256}, ${alpha})`;
 }
 
 
@@ -908,48 +908,119 @@ function createCategoryChart() {
 
 
 // Importing Data *********************
-// Get Correlation data from general data for correlation charts
-d3.json(urlJSONCorrelationsByRow).then(function (correlationsData) {
-    correlationsByRow = structuredClone(correlationsData);
-});
+// Get Correlation data from general data for correlation charts (LOCAL)
+// d3.json(urlJSONCorrelationsByRow).then(function (correlationsData) {
+//     correlationsByRow = structuredClone(correlationsData);
+// });
 
-// Get retirement home data by Row (record)
-d3.json(urlJSONByRow).then(function (dataRows) {
-    dataByRow = structuredClone(dataRows);
-    console.log('Data by Row: ');
-    console.log(dataRows);
-    createMap(dataRows, 'Overall Rating', ['null', 1,2,3,4,5]);
 
-});
+// Get Correlation data by Server
+fetch('static/DatasetManipulations/correlations_df_by_record.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(correlationsData => {
+        correlationsByRow = structuredClone(correlationsData);
+        console.log(correlationsData);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 
-// Get retirement home data by Column (record)
-d3.json(urlJSONByColumn).then(function (dataColumns) {
-    dataByColumn = structuredClone(dataColumns);
-    // console.log(bootstrap.Tooltip.VERSION);
 
-    // Quick printout-sanity-check
-    console.log('Data by Column:');
-    console.log(dataColumns);
+// Get retirement home data by Row (record) (LOCAL)
+//   d3.json(urlJSONByRow).then(function (dataRows) {
+//       dataByRow = structuredClone(dataRows);
+//       console.log('Data by Row: ');
+//       console.log(dataRows);
+//       createMap(dataRows, 'Overall Rating', ['null', 1,2,3,4,5]);
 
-    function initialize() {
-        addCategoryPanel();
+//   });
 
-        let dropDownMenu = d3.select('#selDataset0');
-        let keys = Object.keys(dataColumns);
-        keys.forEach(key => {
-            // console.log(key);
-            let option1 = dropDownMenu.append('option').text(key);
-            option1.attr('value', key);
-        });
-        console.log('**************');
-        // console.log(data1['Federal Provider Number']);
-
-        populateValuesOfCategory('selDataset0');
-
-        addButtons();
+// Loads the dataByRow variable using the dataByColumn Variable
+function loadDataByRow(dataColumns) {
+    dataByRow = [];
+    for (let i = 0; i < dataColumns['Federal Provider Number'].length; i++) {
+        let record = {};
+        for (let j = 0; j < listOfTruncatedNursingDataFrameColumns.length; j++) {
+            record[listOfTruncatedNursingDataFrameColumns[j]] = dataColumns[listOfTruncatedNursingDataFrameColumns[j]][i];
+        }
+        dataByRow.push(record);
     }
 
-    initialize();
+}
+
+// Get retirement home data by Column (by server)
+fetch('/get_data_by_column')
+    .then(response => response.json())
+    .then(function (dataColumns) {
+        dataByColumn = structuredClone(dataColumns);
+        // console.log(bootstrap.Tooltip.VERSION);
+
+        // Quick printout-sanity-check
+        console.log('Data by Column:');
+        console.log(dataColumns);
+
+        function initialize() {
+            addCategoryPanel();
+
+            let dropDownMenu = d3.select('#selDataset0');
+            let keys = Object.keys(dataColumns);
+            keys.forEach(key => {
+                // console.log(key);
+                let option1 = dropDownMenu.append('option').text(key);
+                option1.attr('value', key);
+            });
+            console.log('**************');
+            // console.log(data1['Federal Provider Number']);
+
+            populateValuesOfCategory('selDataset0');
+
+            addButtons();
+
+            loadDataByRow(dataColumns);
+        }
+
+        initialize();
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
 
 
-});
+// Get retirement home data by Column (LOCAL)
+// d3.json(urlJSONByColumn).then(function (dataColumns) {
+//     dataByColumn = structuredClone(dataColumns);
+//     // console.log(bootstrap.Tooltip.VERSION);
+
+//     // Quick printout-sanity-check
+//     console.log('Data by Column:');
+//     console.log(dataColumns);
+
+//     function initialize() {
+//         addCategoryPanel();
+
+//         let dropDownMenu = d3.select('#selDataset0');
+//         let keys = Object.keys(dataColumns);
+//         keys.forEach(key => {
+//             // console.log(key);
+//             let option1 = dropDownMenu.append('option').text(key);
+//             option1.attr('value', key);
+//         });
+//         console.log('**************');
+//         // console.log(data1['Federal Provider Number']);
+
+//         populateValuesOfCategory('selDataset0');
+
+//         addButtons();
+
+//         loadDataByRow(dataColumns);
+//     }
+
+//     initialize();
+
+
+// });
