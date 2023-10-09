@@ -15,7 +15,7 @@ const pool = new Pool({
 //     port: 5433,
 //     database: 'mytestdatabase',
 //     user: 'postgres',
-//     password: 'SER@7qqqsmeasrai'
+//     password: 'SE@3qqqeasrai'
 // });
 
 
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS performance_table (
 
 
 const createBusinessTableQuery = `
-            CREATE TABLE business_table (                
+            CREATE TABLE IF NOT EXISTS business_table (                
                 federal_provider_number VARCHAR PRIMARY KEY NOT NULL, 
                 provider_name VARCHAR(225) NOT NULL,
                 provider_city VARCHAR(50) NOT NULL,
@@ -93,7 +93,7 @@ async function processCSV() {
 
         // Process performance_table.csv
         await new Promise((resolve, reject) => {
-            fs.createReadStream('zipcode_table.csv')
+            fs.createReadStream('./static/TableData/zipcode_table.csv')
                 .pipe(fastcsv.parse({ headers: true }))
                 .on('data', function (row) {
                     this.pause();
@@ -116,7 +116,7 @@ async function processCSV() {
 
         // Process performance_table.csv
         await new Promise((resolve, reject) => {
-            fs.createReadStream('performance_table.csv')
+            fs.createReadStream('./static/TableData/performance_table.csv')
                 .pipe(fastcsv.parse({ headers: true }))
                 .on('data', function (row) {
                     this.pause();
@@ -147,7 +147,7 @@ async function processCSV() {
 
         // Process business_table.csv
         await new Promise((resolve, reject) => {
-            fs.createReadStream('business_table.csv')
+            fs.createReadStream('./static/TableData/business_table.csv')
                 .pipe(fastcsv.parse({ headers: true }))
                 .on('data', function (row) {
                     this.pause();
