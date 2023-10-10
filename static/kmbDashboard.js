@@ -652,6 +652,10 @@ function createDoughnutChart() {
             }]
         },
         options: {
+            title: {
+                display: true,
+                text: 'Total Weight By Category'
+            },
             cutoutPercentage: 50,
             responsive: true
         }

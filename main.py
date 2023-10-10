@@ -22,10 +22,7 @@ list_of_truncated_nursing_dataframe_columns = ['Federal Provider Number', 'Provi
 
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL", "postgresql://postgres:RES%4007smeasrai@localhost:5432/mytestdatabase"
-
-)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # silence the deprecation warning
 
