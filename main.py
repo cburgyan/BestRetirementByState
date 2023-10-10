@@ -2,9 +2,29 @@ from flask import Flask, render_template, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 
+
+
+list_of_truncated_nursing_dataframe_columns = ['Federal Provider Number', 'Provider Name',
+    'Provider City', 'Provider State', 'Provider Zip Code', 'Provider County Name',
+    'Ownership Type', 'Number of Certified Beds', 'Number of Residents in Certified Beds',
+    'Provider Type', 'Provider Resides in Hospital',
+    'Most Recent Health Inspection More Than 2 Years Ago',
+    'Automatic Sprinkler Systems in All Required Areas', 'Overall Rating',
+    'Health Inspection Rating', 'Staffing Rating', 'RN Staffing Rating',
+    'Total Weighted Health Survey Score', 'Number of Facility Reported Incidents',
+    'Number of Substantiated Complaints', 'Number of Fines',
+    'Total Amount of Fines in Dollars', 'Number of Payment Denials',
+    'Total Number of Penalties', 'Location', 'Processing Date', 'Latitude',
+    'Adjusted Total Nurse Staffing Hours per Resident per Day', 'Longitude'];
+
+
+
+
+
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL", "postgres:// postgres:SER@07smeasrai@localhost:5433/mytestdatabase"
+    "DATABASE_URL", "postgresql://postgres:RES%4007smeasrai@localhost:5432/mytestdatabase"
+
 )
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # silence the deprecation warning
@@ -28,10 +48,10 @@ class Performance(db.Model):
     overall_rating = db.Column(db.Float)
     health_inspection_rating = db.Column(db.Float)
     staffing_rating = db.Column(db.Float)
-    RN_staffing_rating = db.Column(db.Float)
+    rn_staffing_rating = db.Column(db.Float)
     total_weighted_health_survey_score = db.Column(db.Numeric(10, 3))
     number_of_facility_reported_incidents = db.Column(db.Integer, nullable=False)
-    number_of_substantial_complaints = db.Column(db.Integer, nullable=False)
+    number_of_substantiated_complaints = db.Column(db.Integer, nullable=False)
     number_of_fines = db.Column(db.Integer, nullable=False)
     total_amount_of_fines_in_dollars = db.Column(
         db.String, nullable=False
@@ -55,12 +75,12 @@ class Business(db.Model):
     number_of_certified_beds = db.Column(db.Integer, nullable=False)
     number_of_residents_in_certified_beds = db.Column(db.Integer, nullable=False)
     provider_type = db.Column(db.String(50), nullable=False)
-    provider_resides_in_hopsital = db.Column(db.String(5), nullable=False)
+    provider_resides_in_hospital = db.Column(db.String(5), nullable=False)
     automatic_sprinkler_systems_in_all_required_areas = db.Column(
         db.String(10), nullable=False
     )
     location = db.Column(db.String(225), nullable=False)
-    processing_data = db.Column(db.Date, nullable=False)
+    processing_date = db.Column(db.Date, nullable=False)
     latitude = db.Column(db.Numeric(10, 6), nullable=False)
     longitude = db.Column(db.Numeric(10, 6), nullable=False)
     adjusted_total_nurse_staffing_hours_per_resident_per_day = db.Column(
@@ -103,8 +123,15 @@ class Business(db.Model):
 # def maps():
 #     return render_template("homesInMaps.html")
 
+
+
+def change_key_name(dictionary, old_key, new_key):
+    if old_key in dictionary:
+        dictionary[new_key] = dictionary.pop(old_key)
+    return dictionary
+
 @app.route('/get_data_by_column')
-def get_data():
+def get_data_by_column():
 
     # Use SQLAlchemy's join functionality to get the combined data
     results = db.session.query(
@@ -115,69 +142,164 @@ def get_data():
         Performance, Business.performance_id == Performance.performance_id
     ).all()
 
+    print(type(results))
+    print(f'results: {results[0]}')
+    print(f'length: {len(results)}')
+    for i in range(10):
+        print(results[i][0])
     # Create dictionaries for each table/column
-    business_data = {
-        'federal_provider_number': [],
-        'provider_name': [],
-        'provider_city': [],
-        'provider_zip_code': [],
-        'provider_county_name': [],
-        'ownership_type': [],
-        'number_of_certified_beds': [],
-        'number_of_residents_in_certified_beds': [],
-        'provider_type': [],
-        'provider_resides_in_hospital': [],
-        'automatic_sprinkler_systems_in_all_required_areas': [],
-        'location': [],
-        'processing_data': [],
-        'latitude': [],
-        'longitude': [],
-        'adjusted_total_nurse_staffing_hours_per_resident_per_day': [],
-        'performance_id': []
+    final_results = {
+        'federal_provider_number': {},
+        'provider_name': {},
+        'provider_city': {},
+        'provider_zip_code': {},
+        'provider_county_name': {},
+        'ownership_type': {},
+        'number_of_certified_beds': {},
+        'number_of_residents_in_certified_beds': {},
+        'provider_type': {},
+        'provider_resides_in_hospital': {},
+        'automatic_sprinkler_systems_in_all_required_areas': {},
+        'location': {},
+        'processing_date': {},
+        'latitude': {},
+        'longitude': {},
+        'adjusted_total_nurse_staffing_hours_per_resident_per_day': {},
+        'provider_state': {},
+        'provider_zip_code': {},
+        'most_recent_health_inspection_more_than_2_years_ago': {},
+        'overall_rating': {},
+        'health_inspection_rating': {},
+        'staffing_rating': {},
+        'rn_staffing_rating': {},
+        'total_weighted_health_survey_score': {},
+        'number_of_facility_reported_incidents': {},
+        'number_of_substantiated_complaints': {},
+        'number_of_fines': {},
+        'total_amount_of_fines_in_dollars': {},
+        'number_of_payment_denials': {},
+        'total_number_of_penalties': {},
+        'performance_id': {}
     }
 
-    zipcode_data = {
-        'provider_state': [],
-        'provider_zip_code': []
-    }
+    
+    business_data = [
+        'federal_provider_number',
+        'provider_name',
+        'provider_city',
+        'provider_zip_code',
+        'provider_county_name',
+        'ownership_type',
+        'number_of_certified_beds',
+        'number_of_residents_in_certified_beds',
+        'provider_type',
+        'provider_resides_in_hospital',
+        'automatic_sprinkler_systems_in_all_required_areas',
+        'location',
+        'processing_date',
+        'latitude',
+        'longitude',
+        'adjusted_total_nurse_staffing_hours_per_resident_per_day'
+    ]
 
-    performance_data = {
-        'most_recent_health_inspection_more_than_2_years_ago': [],
-        'overall_rating': [],
-        'health_inspection_rating': [],
-        'staffing_rating': [],
-        'RN_staffing_rating': [],
-        'total_weighted_health_survey_score': [],
-        'number_of_facility_reported_incidents': [],
-        'number_of_substantial_complaints': [],
-        'number_of_fines': [],
-        'total_amount_of_fines_in_dollars': [],
-        'number_of_payment_denials': [],
-        'total_number_of_penalties': [],
-        'performance_id': []
-    }
+    zipcode_data = [
+        'provider_state',
+        'provider_zip_code'
+    ]
 
+    performance_data = [
+        'most_recent_health_inspection_more_than_2_years_ago',
+        'overall_rating',
+        'health_inspection_rating',
+        'staffing_rating',
+        'rn_staffing_rating',
+        'total_weighted_health_survey_score',
+        'number_of_facility_reported_incidents',
+        'number_of_substantiated_complaints',
+        'number_of_fines',
+        'total_amount_of_fines_in_dollars',
+        'number_of_payment_denials',
+        'total_number_of_penalties',
+        'performance_id'
+    ]
+
+    count = 0
     for business, zipcode, performance in results:
         for key in business_data:
-            business_data[key].append(getattr(business, key))
+            final_results[key][count] = getattr(business, key)
         for key in zipcode_data:
-            zipcode_data[key].append(getattr(zipcode, key))
+            final_results[key][count] = getattr(zipcode, key)
         for key in performance_data:
-            performance_data[key].append(getattr(performance, key))
+            final_results[key][count] = getattr(performance, key)
+        count += 1
 
-    combined_data = {**business_data, **zipcode_data, **performance_data}
+    for key in final_results:
+        for elem in list_of_truncated_nursing_dataframe_columns:
+            if elem.lower() == key.replace('_', ' '):
+                final_results = change_key_name(final_results, key, elem)
 
-    # Convert combined_data to a list of dictionaries, where each dictionary represents a column
-    dataByColumn = [{"columnName": key, "values": value} for key, value in combined_data.items()]
+    # business_data = {
+    #     'federal_provider_number': [],
+    #     'provider_name': [],
+    #     'provider_city': [],
+    #     'provider_zip_code': [],
+    #     'provider_county_name': [],
+    #     'ownership_type': [],
+    #     'number_of_certified_beds': [],
+    #     'number_of_residents_in_certified_beds': [],
+    #     'provider_type': [],
+    #     'provider_resides_in_hospital': [],
+    #     'automatic_sprinkler_systems_in_all_required_areas': [],
+    #     'location': [],
+    #     'processing_date': [],
+    #     'latitude': [],
+    #     'longitude': [],
+    #     'adjusted_total_nurse_staffing_hours_per_resident_per_day': [],
+    #     'performance_id': []
+    # }
 
-    return jsonify(dataByColumn)
+    # zipcode_data = {
+    #     'provider_state': [],
+    #     'provider_zip_code': []
+    # }
+
+    # performance_data = {
+    #     'most_recent_health_inspection_more_than_2_years_ago': [],
+    #     'overall_rating': [],
+    #     'health_inspection_rating': [],
+    #     'staffing_rating': [],
+    #     'rn_staffing_rating': [],
+    #     'total_weighted_health_survey_score': [],
+    #     'number_of_facility_reported_incidents': [],
+    #     'number_of_substantiated_complaints': [],
+    #     'number_of_fines': [],
+    #     'total_amount_of_fines_in_dollars': [],
+    #     'number_of_payment_denials': [],
+    #     'total_number_of_penalties': [],
+    #     'performance_id': []
+    # }
+
+    # for business, zipcode, performance in results:
+    #     for key in business_data:
+    #         business_data[key].append(getattr(business, key))
+    #     for key in zipcode_data:
+    #         zipcode_data[key].append(getattr(zipcode, key))
+    #     for key in performance_data:
+    #         performance_data[key].append(getattr(performance, key))
+
+    # combined_data = {**business_data, **zipcode_data, **performance_data}
+
+    # # Convert combined_data to a list of dictionaries, where each dictionary represents a column
+    # dataByColumn = [{"columnName": key, "values": value} for key, value in combined_data.items()]
+
+    return jsonify(final_results)
 
 
 
 
 
 @app.route("/get_data_by_row")
-def get_data():
+def get_data_by_row():
     # Use SQLAlchemy's join functionality to get the combined data
     results = (
         db.session.query(Business, Zipcode, Performance)
@@ -202,8 +324,8 @@ def get_data():
             "provider_resides_in_hospital": business.provider_resides_in_hospital,
             "automatic_sprinkler_systems_in_all_required_areas": business.automatic_sprinkler_systems_in_all_required_areas,
             "location": business.location,
-            "processing_date": business.processing_data.strftime("%Y-%m-%d")
-            if business.processing_data
+            "processing_date": business.processing_date.strftime("%Y-%m-%d")
+            if business.processing_date
             else None,  # format date as string
             "latitude": float(business.latitude),
             "longitude": float(business.longitude),
@@ -220,12 +342,12 @@ def get_data():
             "overall_rating": float(performance.overall_rating),
             "health_inspection_rating": float(performance.health_inspection_rating),
             "staffing_rating": float(performance.staffing_rating),
-            "RN_staffing_rating": float(performance.RN_staffing_rating),
+            "rn_staffing_rating": float(performance.rn_staffing_rating),
             "total_weighted_health_survey_score": float(
                 performance.total_weighted_health_survey_score
             ),
             "number_of_facility_reported_incidents": performance.number_of_facility_reported_incidents,
-            "number_of_substantial_complaints": performance.number_of_substantial_complaints,
+            "number_of_substantiated_complaints": performance.number_of_substantiated_complaints,
             "number_of_fines": performance.number_of_fines,
             "total_amount_of_fines_in_dollars": performance.total_amount_of_fines_in_dollars,
             "number_of_payment_denials": performance.number_of_payment_denials,

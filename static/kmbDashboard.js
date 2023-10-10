@@ -207,6 +207,7 @@ function populateValuesOfCategory(selectId) {
         selectElement.options.length = 0;
     }
 
+    
     // data can't be null
     if (dataByColumn != null) {
 
@@ -228,6 +229,11 @@ function populateValuesOfCategory(selectId) {
             }
         }
 
+        console.log(`seenValues: ${seenValues}`);
+        seenValues.forEach(value => {
+            console.log(`value: ${value}`);
+          });
+          
 
         // instead make a list of columns that makes sense to use as a range
         // in weighting and test if the current category is in the list
@@ -237,12 +243,13 @@ function populateValuesOfCategory(selectId) {
             disableRadioButton(true, `range${parseInt(numStr) / 2}`);
         }
 
+        console.log(`result: ${JSON.stringify(result)}`);
         let sortedByValues = structuredClone(result);
         let entries = Object.entries(sortedByValues);
         let sortedArray = entries.sort(([, a], [, b]) => a - b);
         let sortedMap = new Map(sortedArray);
         let sorted2DArray = [...sortedMap];
-
+        console.log(`sorted2DArray: ${sorted2DArray}`);
         for (let i = 0; i < sorted2DArray.length; i++) {
             let option1 = dropDownMenuValue.append('option').text(sorted2DArray[i][1]);
             option1.attr('value', sorted2DArray[i][1]);
@@ -943,13 +950,23 @@ fetch('static/DatasetManipulations/correlations_df_by_record.json')
 // Loads the dataByRow variable using the dataByColumn Variable
 function loadDataByRow(dataColumns) {
     dataByRow = [];
-    for (let i = 0; i < dataColumns['Federal Provider Number'].length; i++) {
+    let listOfKeys = Object.keys(dataColumns);
+    console.log(listOfKeys);
+    console.log(`Object.keys(dataColumns['provider_name']).length: ${Object.keys(dataColumns['provider_name']).length}`);
+    for (let i = 0; i < Object.keys(dataColumns['provider_name']).length; i++) {
         let record = {};
-        for (let j = 0; j < listOfTruncatedNursingDataFrameColumns.length; j++) {
-            record[listOfTruncatedNursingDataFrameColumns[j]] = dataColumns[listOfTruncatedNursingDataFrameColumns[j]][i];
+        for (let j = 0; j < listOfKeys.length; j++) {
+            record[listOfKeys[j]] = dataColumns[listOfKeys[j]][i];
+            // if (i < 10) {
+            //     console.log(`record[listOfKeys[j]]: ${record[listOfKeys[j]]}`);
+            //     console.log(`dataColumns[listOfKeys[j]][i]: ${dataColumns[listOfKeys[j]][i]}`);
+            // }
         }
+
         dataByRow.push(record);
     }
+    console.log('data by row: ');
+    console.log(dataByRow);
 
 }
 
@@ -971,6 +988,12 @@ fetch('/get_data_by_column')
             let keys = Object.keys(dataColumns);
             keys.forEach(key => {
                 // console.log(key);
+                // key = key.replace(/_/g, ' ');
+                // for (let i = 0; i < listOfTruncatedNursingDataFrameColumns.length; i++){
+                //     if (listOfTruncatedNursingDataFrameColumns[i].toLowerCase() == key){
+                //         key = listOfTruncatedNursingDataFrameColumns[i];
+                //     }
+                // }
                 let option1 = dropDownMenu.append('option').text(key);
                 option1.attr('value', key);
             });
