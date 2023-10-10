@@ -6,16 +6,16 @@ import os
 
 list_of_truncated_nursing_dataframe_columns = ['Federal Provider Number', 'Provider Name',
     'Provider City', 'Provider State', 'Provider Zip Code', 'Provider County Name',
-    'Ownership Type', 'Number of Certified Beds', 'Number of Residents in Certified Beds',
-    'Provider Type', 'Provider Resides in Hospital',
+    'Ownership Type', 'Number Of Certified Beds', 'Number Of Residents In Certified Beds',
+    'Provider Type', 'Provider Resides In Hospital',
     'Most Recent Health Inspection More Than 2 Years Ago',
-    'Automatic Sprinkler Systems in All Required Areas', 'Overall Rating',
+    'Automatic Sprinkler Systems In All Required Areas', 'Overall Rating',
     'Health Inspection Rating', 'Staffing Rating', 'RN Staffing Rating',
-    'Total Weighted Health Survey Score', 'Number of Facility Reported Incidents',
-    'Number of Substantiated Complaints', 'Number of Fines',
-    'Total Amount of Fines in Dollars', 'Number of Payment Denials',
-    'Total Number of Penalties', 'Location', 'Processing Date', 'Latitude',
-    'Adjusted Total Nurse Staffing Hours per Resident per Day', 'Longitude'];
+    'Total Weighted Health Survey Score', 'Number Of Facility Reported Incidents',
+    'Number Of Substantiated Complaints', 'Number Of Fines',
+    'Total Amount Of Fines In Dollars', 'Number Of Payment Denials',
+    'Total Number Of Penalties', 'Location', 'Processing Date', 'Latitude',
+    'Adjusted Total Nurse Staffing Hours per Resident per Day', 'Longitude']
 
 
 
@@ -148,39 +148,72 @@ def get_data_by_column():
     for i in range(10):
         print(results[i][0])
     # Create dictionaries for each table/column
+
     final_results = {
-        'federal_provider_number': {},
-        'provider_name': {},
-        'provider_city': {},
-        'provider_zip_code': {},
-        'provider_county_name': {},
-        'ownership_type': {},
-        'number_of_certified_beds': {},
-        'number_of_residents_in_certified_beds': {},
-        'provider_type': {},
-        'provider_resides_in_hospital': {},
-        'automatic_sprinkler_systems_in_all_required_areas': {},
-        'location': {},
-        'processing_date': {},
-        'latitude': {},
-        'longitude': {},
-        'adjusted_total_nurse_staffing_hours_per_resident_per_day': {},
-        'provider_state': {},
-        'provider_zip_code': {},
-        'most_recent_health_inspection_more_than_2_years_ago': {},
-        'overall_rating': {},
-        'health_inspection_rating': {},
-        'staffing_rating': {},
-        'rn_staffing_rating': {},
-        'total_weighted_health_survey_score': {},
-        'number_of_facility_reported_incidents': {},
-        'number_of_substantiated_complaints': {},
-        'number_of_fines': {},
-        'total_amount_of_fines_in_dollars': {},
-        'number_of_payment_denials': {},
-        'total_number_of_penalties': {},
-        'performance_id': {}
+    'Federal Provider Number':{},
+    'Provider Name':{},
+    'Provider City':{},
+    'Provider State':{},
+    'Provider Zip Code':{},
+    'Provider County Name':{},
+    'Ownership Type':{},
+    'Number Of Certified Beds':{},
+    'Number Of Residents In Certified Beds':{},
+    'Provider Type':{},
+    'Provider Resides In Hospital':{},
+    'Most Recent Health Inspection More Than 2 Years Ago':{},
+    'Automatic Sprinkler Systems In All Required Areas':{},
+    'Overall Rating':{},
+    'Health Inspection Rating':{},
+    'Staffing Rating':{},
+    'RN Staffing Rating':{},
+    'Total Weighted Health Survey Score':{},
+    'Number Of Facility Reported Incidents':{},
+    'Number Of Substantiated Complaints':{},
+    'Number Of Fines':{},
+    'Total Amount Of Fines In Dollars':{},
+    'Number Of Payment Denials':{},
+    'Total Number Of Penalties':{},
+    'Location':{},
+    'Processing Date':{},
+    'Latitude':{},
+    'Adjusted Total Nurse Staffing Hours Per Resident Per Day':{},
+    'Longitude':{},
+    'Performance Id':{}
     }
+    # final_results = {
+    #     'federal_provider_number': {},
+    #     'provider_name': {},
+    #     'provider_city': {},
+    #     'provider_zip_code': {},
+    #     'provider_county_name': {},
+    #     'ownership_type': {},
+    #     'number_of_certified_beds': {},
+    #     'number_of_residents_in_certified_beds': {},
+    #     'provider_type': {},
+    #     'provider_resides_in_hospital': {},
+    #     'automatic_sprinkler_systems_in_all_required_areas': {},
+    #     'location': {},
+    #     'processing_date': {},
+    #     'latitude': {},
+    #     'longitude': {},
+    #     'adjusted_total_nurse_staffing_hours_per_resident_per_day': {},
+    #     'provider_state': {},
+    #     'provider_zip_code': {},
+    #     'most_recent_health_inspection_more_than_2_years_ago': {},
+    #     'overall_rating': {},
+    #     'health_inspection_rating': {},
+    #     'staffing_rating': {},
+    #     'rn_staffing_rating': {},
+    #     'total_weighted_health_survey_score': {},
+    #     'number_of_facility_reported_incidents': {},
+    #     'number_of_substantiated_complaints': {},
+    #     'number_of_fines': {},
+    #     'total_amount_of_fines_in_dollars': {},
+    #     'number_of_payment_denials': {},
+    #     'total_number_of_penalties': {},
+    #     'performance_id': {}
+    # }
 
     
     business_data = [
@@ -226,17 +259,22 @@ def get_data_by_column():
     count = 0
     for business, zipcode, performance in results:
         for key in business_data:
-            final_results[key][count] = getattr(business, key)
+            final_results[(key.replace('_', ' ')).title()][count] = getattr(business, key)
         for key in zipcode_data:
-            final_results[key][count] = getattr(zipcode, key)
+            final_results[(key.replace('_', ' ')).title()][count] = getattr(zipcode, key)
         for key in performance_data:
-            final_results[key][count] = getattr(performance, key)
+            if key != 'rn_staffing_rating':
+                final_results[(key.replace('_', ' ')).title()][count] = getattr(performance, key)
+            else:
+                final_results['RN Staffing Rating'][count] = getattr(performance, key)
+
         count += 1
 
-    for key in final_results:
-        for elem in list_of_truncated_nursing_dataframe_columns:
-            if elem.lower() == key.replace('_', ' '):
-                final_results = change_key_name(final_results, key, elem)
+    # print(f"final_results['Performance Id']: {final_results['Performance Id']}")
+    # for key in final_results:
+    #     for elem in list_of_truncated_nursing_dataframe_columns:
+    #         if elem.lower() == key.replace('_', ' '):
+    #             final_results = change_key_name(final_results, key, elem)
 
     # business_data = {
     #     'federal_provider_number': [],

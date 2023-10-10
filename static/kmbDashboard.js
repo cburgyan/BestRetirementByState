@@ -5,17 +5,27 @@ const urlJSONByRow = '/static/DatasetManipulations/truncated_nursing_df2_by_reco
 const urlJSONCorrelationsByRow = '/static/DatasetManipulations/correlations_df_by_record.json';
 const colors = ['#a0d', '#b6a', '#e87', '#ed3', '#c0ee11', '#6f0'];
 const listOfTruncatedNursingDataFrameColumns = ['Federal Provider Number', 'Provider Name',
-    'Provider City', 'Provider State', 'Provider Zip Code', 'Provider County Name',
-    'Ownership Type', 'Number of Certified Beds', 'Number of Residents in Certified Beds',
-    'Provider Type', 'Provider Resides in Hospital',
-    'Most Recent Health Inspection More Than 2 Years Ago',
-    'Automatic Sprinkler Systems in All Required Areas', 'Overall Rating',
-    'Health Inspection Rating', 'Staffing Rating', 'RN Staffing Rating',
-    'Total Weighted Health Survey Score', 'Number of Facility Reported Incidents',
-    'Number of Substantiated Complaints', 'Number of Fines',
-    'Total Amount of Fines in Dollars', 'Number of Payment Denials',
-    'Total Number of Penalties', 'Location', 'Processing Date', 'Latitude',
-    'Adjusted Total Nurse Staffing Hours per Resident per Day', 'Longitude'];
+'Provider City', 'Provider State', 'Provider Zip Code', 'Provider County Name',
+'Ownership Type', 'Number Of Certified Beds', 'Number Of Residents In Certified Beds',
+'Provider Type', 'Provider Resides In Hospital',
+'Most Recent Health Inspection More Than 2 Years Ago',
+'Automatic Sprinkler Systems In All Required Areas', 'Overall Rating',
+'Health Inspection Rating', 'Staffing Rating', 'RN Staffing Rating',
+'Total Weighted Health Survey Score', 'Number Of Facility Reported Incidents',
+'Number Of Substantiated Complaints', 'Number Of Fines',
+'Total Amount Of Fines In Dollars', 'Number Of Payment Denials',
+'Total Number Of Penalties', 'Location', 'Processing Date', 'Latitude',
+'Adjusted Total Nurse Staffing Hours Per Resident Per Day', 'Longitude'];
+const isRangeCategory = ['Provider Zip Code','Number Of Certified Beds', 'Number Of Residents In Certified Beds',
+'Overall Rating','Health Inspection Rating', 'Staffing Rating', 'RN Staffing Rating',
+'Total Weighted Health Survey Score', 'Number Of Facility Reported Incidents',
+'Number Of Substantiated Complaints', 'Number Of Fines',
+'Total Amount Of Fines In Dollars', 'Number Of Payment Denials',
+'Total Number Of Penalties','Latitude',
+'Adjusted Total Nurse Staffing Hours Per Resident Per Day', 'Longitude'];
+const centerOfUSA = [
+    37, -100
+];
 
 // Declared Variables
 let dropDownMenuValue;
@@ -230,14 +240,14 @@ function populateValuesOfCategory(selectId) {
         }
 
         console.log(`seenValues: ${seenValues}`);
-        seenValues.forEach(value => {
-            console.log(`value: ${value}`);
-          });
+        // seenValues.forEach(value => {
+        //     console.log(`value: ${value}`);
+        //   });
           
 
         // instead make a list of columns that makes sense to use as a range
         // in weighting and test if the current category is in the list
-        if (allValuesAreNumbers) {
+        if (isRangeCategory.includes(category_key)) {
             disableRadioButton(false, `range${parseInt(numStr) / 2}`);
         } else {
             disableRadioButton(true, `range${parseInt(numStr) / 2}`);
@@ -370,6 +380,10 @@ function addButtons() {
     calcButton.attr('style', 'margin: 0px 6px 14px 2px; box-shadow: 0px 3px 4px 0px;');
     calcButton.attr('onclick', 'buttonClicked("calculateTotal")');
     calcButton.html('Calculate Total');
+
+    let buttonAdjacentLabel = addCalcButtonContainer.append('label');
+    buttonAdjacentLabel.html('Click the "Calculate Total" button after entering a "Weight" to see charts and details.');
+    buttonAdjacentLabel.attr('style', 'opacity: 0.8')
 }
 
 // Adds another category panel with 2 selectors, 2 radio buttons, and a textfield
@@ -543,14 +557,14 @@ function createCorrelationsChart() {
         for (let k = 0; k < correlationsByRow.length; k++) {
             console.log(`correlationsByRow[k]['Column Of Category']: ${correlationsByRow[k]['Column Of Category']}`);
             console.log(`listOfCategories[j]: ${listOfCategories[j]}`);
-            if (correlationsByRow[k]['Column Of Category'] == currentCategory) {
+            if (correlationsByRow[k]['Column Of Category'].toLowerCase() == currentCategory.toLowerCase()) {
                 let correlTableRow = correlationsByRow[k];
                 for (let m = j; m < listOfCategories.length; m++) {
                     let secondCurrentCategory = listOfCategories[m];
                     if (currentCategory == secondCurrentCategory) {
                         continue;
                     }
-                    let correlationCoefficient = correlTableRow[secondCurrentCategory];
+                    let correlationCoefficient = correlTableRow[secondCurrentCategory.replace(/ In /g, ' in ').replace(/ Of /g, ' of ').replace(/ Per /g, ' per ')];
                     // console.log(`correlTableRow[secondCurrentCategory]: ${correlTableRow[secondCurrentCategory]}`);
                     // console.log(`correlTableRow: ${JSON.stringify(correlTableRow)}`);
                     // console.log(`secondCurrentCategory: ${secondCurrentCategory}`);
@@ -657,10 +671,13 @@ function createMarkers(dataRow, myMap) {
         feature['properties'] = dataRow[i];
         feature['geometry'] = {
             type: 'Point',
-            coordinates: [dataRow[i].Longitude, dataRow[i].Latitude]
+            coordinates: [parseFloat(dataRow[i].Longitude), parseFloat(dataRow[i].Latitude)]
         };
         features.push(feature);
+        // console.log(`feature: ${JSON.stringify(feature)}`);
+        // break;
     }
+
     let distributionMax;
     let distributionMin;
     let delta;
@@ -771,7 +788,7 @@ function removeAllMapMarkers() {
     // });
     myMap.remove()
     let stepLabels = ['Least', '&emsp;.', '&emsp;.', '&emsp;.', '&emsp;.', 'Greatest'];
-    createMap(topXRecords, 'Weighted Total', stepLabels);
+    createMap(topXRecords, 'Weighted Total', stepLabels, [topXRecords[0]['Latitude'], topXRecords[0]['Longitude']]);
 
 }
 
@@ -824,16 +841,14 @@ function createLegend(myMap, legendLabels, legendTitle) {
 
 
 // Create leaflet map given data a legend title and step labels for the legend
-function createMap(dataRows, legendTitle, stepLabels) {
+function createMap(dataRows, legendTitle, stepLabels, startCoordinates) {
     // console.log(`dataRows: \n${dataRows}`);
     let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     })
 
     myMap = L.map("map1", {
-        center: [
-            37, -100
-        ],
+        center: startCoordinates,
         zoom: 4,
         layers: [street]
     });
@@ -931,6 +946,7 @@ fetch('static/DatasetManipulations/correlations_df_by_record.json')
     })
     .then(correlationsData => {
         correlationsByRow = structuredClone(correlationsData);
+
         console.log(correlationsData);
     })
     .catch(error => {
@@ -952,8 +968,8 @@ function loadDataByRow(dataColumns) {
     dataByRow = [];
     let listOfKeys = Object.keys(dataColumns);
     console.log(listOfKeys);
-    console.log(`Object.keys(dataColumns['provider_name']).length: ${Object.keys(dataColumns['provider_name']).length}`);
-    for (let i = 0; i < Object.keys(dataColumns['provider_name']).length; i++) {
+    console.log(`Object.keys(dataColumns['provider_name']).length: ${Object.keys(dataColumns['Provider Name']).length}`);
+    for (let i = 0; i < Object.keys(dataColumns['Provider Name']).length; i++) {
         let record = {};
         for (let j = 0; j < listOfKeys.length; j++) {
             record[listOfKeys[j]] = dataColumns[listOfKeys[j]][i];
@@ -967,6 +983,7 @@ function loadDataByRow(dataColumns) {
     }
     console.log('data by row: ');
     console.log(dataByRow);
+    createMap(dataByRow, 'Overall Rating', ['null', 1,2,3,4,5], centerOfUSA);
 
 }
 
