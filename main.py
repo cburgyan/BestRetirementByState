@@ -1,5 +1,6 @@
 from flask import Flask, render_template, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
 import os
 
 
