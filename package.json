@@ -4,6 +4,7 @@
   "description": "Karoly Burgyan<br>\r Thanh Le Dinh<br>\r Shayla Badeaux<br>\r Maria Paula Parra<br>\r Christian Cantu<br>",
   "main": "index.js",
   "scripts": {
+    "start": "node n2odeSetUpTables.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
