@@ -2,7 +2,7 @@ from flask import Flask, render_template, send_file, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 import os
-import psycopg2
+# import psycopg2
 
 
 
@@ -22,14 +22,13 @@ list_of_truncated_nursing_dataframe_columns = ['Federal Provider Number', 'Provi
 
 
 app = Flask(__name__)
-# DATABASE_URL = os.environ['DATABASE_URL']
 DATABASE_URL = os.environ['DATABASE_URL'].replace("postgres://", "postgresql://")
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # silence the deprecation warning
 
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 db = SQLAlchemy(app)
 
 
