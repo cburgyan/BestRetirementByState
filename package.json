@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Dashboard for retirement homes.",
   "main": "n2odeSetUpTables.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"This is an echo statement fofo-foobar that could be replaced with a test\""
   },
@@ -11,5 +10,9 @@
     "retirement"
   ],
   "author": "kmb",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "fast-csv": "^4.3.6",
+    "pg": "^8.11.3"
+  }
 }
