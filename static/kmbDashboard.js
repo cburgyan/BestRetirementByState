@@ -740,18 +740,10 @@ function createMarkers(dataRow, myMap) {
             }
 
             let diffMaxMin = distributionMax - distributionMin;
-            if (diffMaxMin <= 5) {
-                fillColor1 = colors[Math.floor(5 - (distributionMax - ranking))];
-            } else {
-                if (ranking == distributionMax) {
-                    fillColor1 = colors[colors.length - 1];
-                } else {
-                    fillColor1 = colors[Math.floor((ranking - distributionMin) / delta)];
-                }
-            }
 
-            // To assure fillColor1 always has a color
-            if (!colors.includes(fillColor1)) {
+            if (Math.floor(5 * (ranking - distributionMin) / diffMaxMin) <= 5 && Math.floor(5 * (ranking - distributionMin) / diffMaxMin) >= 0){
+                fillColor1 = colors[Math.floor(5 * (ranking - distributionMin) / diffMaxMin)];
+            } else {
                 fillColor1 = colors[0];
             }
 
