@@ -27,6 +27,10 @@ Christian Cantu<br>
 ## Slide Show Presentation
  <a href="https://docs.google.com/presentation/d/1AyTMH9kfPEsVNtOroBVTMRJSpqwhL2s2nFbILeGHiko/edit#slide=id.p1">Slide Show Link</a>
 
+## Website
+<a href="https://best-retirement-by-state-32fc4bc72365.herokuapp.com/">Click here to see website.</a>
+
+
 ---
 ## Project Outline
 For Project 3, you will work with your group to tell a story using data visualizations. Here are the specific requirements:
@@ -83,6 +87,9 @@ What's the safety profile of these neighborhoods?
 
 ## Javascript Libraries used
 <ol>
+    <li>
+    Node.js
+    </li>
     <li>
         Chart.js
     </li>
@@ -383,6 +390,10 @@ The dashboard is an interactive experience that:
     </li>
 </ul>
 So, the dashboard, with its 29 categories, can cater to all sorts of varying opinions on value. It allows you to get the top 10, 20, 50 (etc.) options that speak to the specifics of your life's priorities.<br><br>
+
+### The Making of the Dashboard
+
+As an aside, for those interested in the construction of the dashboard, the dashboard used Node.js to create and populate database tables (business, perfromance, and zipcode tables) in Heroku's PostgreSQL environment and used Chart.js, Leaflet.js, GeoJSON.js, and Plotly.js for its visuals.<br><br>
 
 ---
 ## Conclusion
