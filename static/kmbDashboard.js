@@ -851,9 +851,15 @@ function createMap(dataRows, legendTitle, stepLabels, startCoordinates) {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     })
 
+    let zoomLevel = 4;
+
+    if (startCoordinates[0] > 48 || startCoordinates[0] < 25 || startCoordinates[1] > 125){
+        zoomLevel = 3;
+    }
+
     myMap = L.map("map1", {
         center: startCoordinates,
-        zoom: 4,
+        zoom: zoomLevel,
         layers: [street]
     });
 
