@@ -159,7 +159,6 @@ fetch(Url)
       const providerCount = stateProviderCounts[stateName];
       const percentage = (providerCount / totalProviders) * 100;
       statePercentages[stateName] = percentage.toFixed(2); // Round to 2 decimal places
-            console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
     }
 
     console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
@@ -172,19 +171,24 @@ fetch(Url)
       usStatesGeoJSON.features.forEach(feature => {
           const stateName = feature.properties.NAME; // Using the "NAME" property from GeoJSON
           const percentage = statePercentages[stateName] || 0;
-          if (stateName == 'Wyoming'){
-            console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
-
-          }
           feature.properties.ProviderPercentage = percentage;
           feature.properties.ProviderCount = stateProviderCounts[stateName] || 0;
           feature.properties.ProviderName = stateProviderNames[stateName] || "";
+          if (stateName == 'Wyoming'){
+            console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
+            console.log( `percentage: ${percentage}`);
+            console.log( `feature.properties.ProviderPercentage: ${feature.properties.ProviderPercentage}`);
+
+          }
         });
 
         // Add the GeoJSON layer to the map
         L.geoJson(usStatesGeoJSON, {
           style: function (feature) {
             const percentage = feature.properties.ProviderPercentage;
+            if (percentage == 2.5){
+              console.log( `percentage: ${percentage}`);
+            }
             return {
               fillColor: colorScale(percentage),
               fillOpacity: 0.7,
