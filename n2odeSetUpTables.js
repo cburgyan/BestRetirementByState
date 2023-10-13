@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS performance_table (
     RN_staffing_rating FLOAT,
     total_weighted_health_survey_score NUMERIC(10,3),
     number_of_facility_reported_incidents INT NOT NULL,
-    number_of_substantial_complaints INT NOT NULL,
+    number_of_substantiated_complaints INT NOT NULL,
     number_of_fines INT NOT NULL,
     total_amount_of_fines_in_dollars VARCHAR NOT NULL,
     number_of_payment_denials INT NOT NULL,
@@ -56,10 +56,10 @@ const createBusinessTableQuery = `
                 number_of_certified_beds INT NOT NULL,
                 number_of_residents_in_certified_beds INT NOT NULL,
                 provider_type VARCHAR(50) NOT NULL,
-                provider_resides_in_hopsital VARCHAR(5) NOT NULL,
+                provider_resides_in_hospital VARCHAR(5) NOT NULL,
                 automatic_sprinkler_systems_in_all_required_areas VARCHAR(10) NOT NULL,
                 location VARCHAR(225) NOT NULL,
-                processing_data DATE NOT NULL,
+                processing_date DATE NOT NULL,
                 latitude NUMERIC(10,6) NOT NULL,
                 longitude NUMERIC(10,6) NOT NULL,
                 adjusted_total_nurse_staffing_hours_per_resident_per_day NUMERIC(8,6),
@@ -125,7 +125,7 @@ async function processCSV() {
                         'INSERT INTO performance_table (most_recent_health_inspection_more_than_2_years_ago, \
                         overall_rating, health_inspection_rating, staffing_rating, RN_staffing_rating, \
                         total_weighted_health_survey_score, number_of_facility_reported_incidents, \
-                        number_of_substantial_complaints, number_of_fines, total_amount_of_fines_in_dollars, \
+                        number_of_substantiated_complaints, number_of_fines, total_amount_of_fines_in_dollars, \
                         number_of_payment_denials, total_number_of_penalties, performance_id) VALUES ($1, $2, \
                             $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)',
                         [row['Most Recent Health Inspection More Than 2 Years Ago'], row['Overall Rating'] || null,
@@ -163,10 +163,10 @@ async function processCSV() {
                             number_of_certified_beds,\
                             number_of_residents_in_certified_beds,\
                             provider_type,\
-                            provider_resides_in_hopsital,\
+                            provider_resides_in_hospital,\
                             automatic_sprinkler_systems_in_all_required_areas,\
                             location,\
-                            processing_data,\
+                            processing_date,\
                             latitude,\
                             longitude,\
                             adjusted_total_nurse_staffing_hours_per_resident_per_day,\
