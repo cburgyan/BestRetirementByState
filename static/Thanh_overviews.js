@@ -159,16 +159,23 @@ fetch(Url)
       const providerCount = stateProviderCounts[stateName];
       const percentage = (providerCount / totalProviders) * 100;
       statePercentages[stateName] = percentage.toFixed(2); // Round to 2 decimal places
+            console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
     }
+
+    console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
 
     // Load the GeoJSON file for US states
     fetch('/static/DatasetManipulations/gz_2010_us_040_00_20m.json')
-      .then(response => response.json())
-      .then(usStatesGeoJSON => {
-        // Add the percentages and provider count as properties to the GeoJSON features
-        usStatesGeoJSON.features.forEach(feature => {
+    .then(response => response.json())
+    .then(usStatesGeoJSON => {
+      // Add the percentages and provider count as properties to the GeoJSON features
+      usStatesGeoJSON.features.forEach(feature => {
           const stateName = feature.properties.NAME; // Using the "NAME" property from GeoJSON
           const percentage = statePercentages[stateName] || 0;
+          if (stateName == 'Wyoming'){
+            console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
+
+          }
           feature.properties.ProviderPercentage = percentage;
           feature.properties.ProviderCount = stateProviderCounts[stateName] || 0;
           feature.properties.ProviderName = stateProviderNames[stateName] || "";
