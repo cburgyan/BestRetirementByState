@@ -186,8 +186,8 @@ fetch(Url)
         L.geoJson(usStatesGeoJSON, {
           style: function (feature) {
             const percentage = feature.properties.ProviderPercentage;
-            if (percentage == 2.5){
-              console.log( `percentage: ${percentage}`);
+            if (percentage == .25){
+              console.log( `percentage (in style): ${percentage}`);
             }
             return {
               fillColor: colorScale(percentage),
