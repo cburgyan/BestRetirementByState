@@ -200,6 +200,13 @@ fetch(Url)
             const stateName = feature.properties.NAME;
             const percentage = feature.properties.ProviderPercentage;
             const providerCount = feature.properties.ProviderCount;
+            
+            if (stateName == 'Wyoming'){
+              console.log( `stateName: ${stateName}`);
+              console.log( `percentage: ${percentage}`);
+              console.log( `providerCount: ${providerCount}`);
+
+            }
             const popupContent = `State: ${stateName}<br>Provider Percentage: ${percentage}%<br>Total Providers: ${providerCount}`;
             layer.bindPopup(popupContent);
           }
