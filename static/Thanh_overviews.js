@@ -161,34 +161,23 @@ fetch(Url)
       statePercentages[stateName] = percentage.toFixed(2); // Round to 2 decimal places
     }
 
-    console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
-
     // Load the GeoJSON file for US states
     fetch('/static/DatasetManipulations/gz_2010_us_040_00_20m.json')
-    .then(response => response.json())
-    .then(usStatesGeoJSON => {
-      // Add the percentages and provider count as properties to the GeoJSON features
-      usStatesGeoJSON.features.forEach(feature => {
+      .then(response => response.json())
+      .then(usStatesGeoJSON => {
+        // Add the percentages and provider count as properties to the GeoJSON features
+        usStatesGeoJSON.features.forEach(feature => {
           const stateName = feature.properties.NAME; // Using the "NAME" property from GeoJSON
           const percentage = statePercentages[stateName] || 0;
           feature.properties.ProviderPercentage = percentage;
           feature.properties.ProviderCount = stateProviderCounts[stateName] || 0;
           feature.properties.ProviderName = stateProviderNames[stateName] || "";
-          if (stateName == 'Wyoming'){
-            console.log( `statePercentages['Wyoming']: ${statePercentages['Wyoming']}`);
-            console.log( `percentage: ${percentage}`);
-            console.log( `feature.properties.ProviderPercentage: ${feature.properties.ProviderPercentage}`);
-
-          }
         });
 
         // Add the GeoJSON layer to the map
         L.geoJson(usStatesGeoJSON, {
           style: function (feature) {
             const percentage = feature.properties.ProviderPercentage;
-            if (percentage == .25){
-              console.log( `percentage (in style): ${percentage}`);
-            }
             return {
               fillColor: colorScale(percentage),
               fillOpacity: 0.7,
@@ -200,13 +189,6 @@ fetch(Url)
             const stateName = feature.properties.NAME;
             const percentage = feature.properties.ProviderPercentage;
             const providerCount = feature.properties.ProviderCount;
-            
-            if (stateName == 'Wyoming'){
-              console.log( `stateName: ${stateName}`);
-              console.log( `percentage: ${percentage}`);
-              console.log( `providerCount: ${providerCount}`);
-
-            }
             const popupContent = `State: ${stateName}<br>Provider Percentage: ${percentage}%<br>Total Providers: ${providerCount}`;
             layer.bindPopup(popupContent);
           }
