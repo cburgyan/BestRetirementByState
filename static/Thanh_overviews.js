@@ -2,7 +2,7 @@
 const barchart = document.getElementById('providerStateChart').getContext('2d');
 
 // Specify the URL where your JSON data is hosted
-const dataUrl = "https://best-retirement-by-state-32fc4bc72365.herokuapp.com/bestNS"; // Your JSON data URL
+const dataUrl = "/bestNS"; // Your JSON data URL
 
 // Function to fetch JSON data from a URL and create the chart
 async function fetchJsonDataAndCreateChart(url) {
@@ -61,7 +61,7 @@ async function fetchJsonDataAndCreateChart(url) {
 // Fetch JSON data and create the chart
 fetchJsonDataAndCreateChart(dataUrl);
 
-const Url = "https://best-retirement-by-state-32fc4bc72365.herokuapp.com/mappingjson";
+const Url = "/mappingjson";
 
 // Create an object to map state abbreviations to full state names data not clean
 const stateAbbreviationToName = {
