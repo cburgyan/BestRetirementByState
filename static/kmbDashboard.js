@@ -146,15 +146,16 @@ function calculateTotalWeight() {
         let category_value = document.getElementById(categoryId).value;
         let value_value = document.getElementById(valueId).value;
         let weight_value = document.getElementById(weightId).value;
-
-        catDict["category"] = category_value;
-        catDict["value"] = value_value;
-        catDict['range_All'] = getRadioButtonSelection(`rangeAllOrNothing${categoryNumber}`);
-        catDict['weight'] = weight_value;
-        catDict['topXWeightedValues'] = [];
-        // console.log(`document.getElementById(\`range\${categoryNumber}\`): ${document.getElementById(`range${categoryNumber}`)}`);
-        catDict['isTreatableAsANumber'] = !(document.getElementById(`range${categoryNumber}`).disabled);
-        listOfWeightedCategories.push(catDict);
+        if (weight_value != ""){
+            catDict["category"] = category_value;
+            catDict["value"] = value_value;
+            catDict['range_All'] = getRadioButtonSelection(`rangeAllOrNothing${categoryNumber}`);
+            catDict['weight'] = weight_value;
+            catDict['topXWeightedValues'] = [];
+            // console.log(`document.getElementById(\`range\${categoryNumber}\`): ${document.getElementById(`range${categoryNumber}`)}`);
+            catDict['isTreatableAsANumber'] = !(document.getElementById(`range${categoryNumber}`).disabled);
+            listOfWeightedCategories.push(catDict);
+        }
     }
     // console.log(`listOfWeightedCategories: ${JSON.stringify(listOfWeightedCategories, null, 2)}`);
 
@@ -733,10 +734,14 @@ function createMarkers(dataRow, myMap) {
             let diffMaxMin = distributionMax - distributionMin;
 
             // Test to assure index for colors will be between 5 and 0 inclusively
-            if (Math.floor(5 * (ranking - distributionMin) / diffMaxMin) <= 5 && Math.floor(5 * (ranking - distributionMin) / diffMaxMin) >= 0){
-                fillColor1 = colors[Math.floor(5 * (ranking - distributionMin) / diffMaxMin)];
+            if (diffMaxMin != 0){
+                if (Math.floor(5 * (ranking - distributionMin) / diffMaxMin) <= 5 && Math.floor(5 * (ranking - distributionMin) / diffMaxMin) >= 0){
+                    fillColor1 = colors[Math.floor(5 * (ranking - distributionMin) / diffMaxMin)];
+                } else {
+                    fillColor1 = colors[0];
+                }
             } else {
-                fillColor1 = colors[0];
+                fillColor1 = colors[5];
             }
 
 
