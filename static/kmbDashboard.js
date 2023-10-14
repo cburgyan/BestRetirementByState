@@ -5,17 +5,25 @@ const urlJSONByRow = '/static/DatasetManipulations/truncated_nursing_df2_by_reco
 const urlJSONCorrelationsByRow = '/static/DatasetManipulations/correlations_df_by_record.json';
 const colors = ['#a0d', '#b6a', '#e87', '#ed3', '#c0ee11', '#6f0'];
 const listOfTruncatedNursingDataFrameColumns = ['Federal Provider Number', 'Provider Name',
-    'Provider City', 'Provider State', 'Provider Zip Code', 'Provider County Name',
-    'Ownership Type', 'Number of Certified Beds', 'Number of Residents in Certified Beds',
-    'Provider Type', 'Provider Resides in Hospital',
-    'Most Recent Health Inspection More Than 2 Years Ago',
-    'Automatic Sprinkler Systems in All Required Areas', 'Overall Rating',
-    'Health Inspection Rating', 'Staffing Rating', 'RN Staffing Rating',
-    'Total Weighted Health Survey Score', 'Number of Facility Reported Incidents',
-    'Number of Substantiated Complaints', 'Number of Fines',
-    'Total Amount of Fines in Dollars', 'Number of Payment Denials',
-    'Total Number of Penalties', 'Location', 'Processing Date', 'Latitude',
-    'Adjusted Total Nurse Staffing Hours per Resident per Day', 'Longitude'];
+'Provider City', 'Provider State', 'Provider Zip Code', 'Provider County Name',
+'Ownership Type', 'Number Of Certified Beds', 'Number Of Residents In Certified Beds',
+'Provider Type', 'Provider Resides In Hospital',
+'Most Recent Health Inspection More Than 2 Years Ago',
+'Automatic Sprinkler Systems In All Required Areas', 'Overall Rating',
+'Health Inspection Rating', 'Staffing Rating', 'RN Staffing Rating',
+'Total Weighted Health Survey Score', 'Number Of Facility Reported Incidents',
+'Number Of Substantiated Complaints', 'Number Of Fines',
+'Total Amount Of Fines In Dollars', 'Number Of Payment Denials',
+'Total Number Of Penalties', 'Location', 'Processing Date', 'Latitude',
+'Adjusted Total Nurse Staffing Hours Per Resident Per Day', 'Longitude'];
+const isRangeCategory = ['Provider Zip Code','Number Of Certified Beds', 'Number Of Residents In Certified Beds',
+'Overall Rating','Health Inspection Rating', 'Staffing Rating', 'RN Staffing Rating',
+'Total Weighted Health Survey Score', 'Number Of Facility Reported Incidents',
+'Number Of Substantiated Complaints', 'Number Of Fines',
+'Total Amount Of Fines In Dollars', 'Number Of Payment Denials',
+'Total Number Of Penalties','Latitude',
+'Adjusted Total Nurse Staffing Hours Per Resident Per Day', 'Longitude'];
+const centerOfUSA = [ 37, -100 ];
 
 // Declared Variables
 let dropDownMenuValue;
@@ -113,10 +121,10 @@ function getRecordsByIndices(indicesAndTotalsForTopX) {
         }
     }
 
-    console.log(topXRecordColumns);
-    console.log(JSON.stringify(topXRecordColumns));
-    console.log(topXRecords);
-    console.log(JSON.stringify(topXRecords));
+    // console.log(topXRecordColumns);
+    // console.log(JSON.stringify(topXRecordColumns));
+    // console.log(topXRecords);
+    // console.log(JSON.stringify(topXRecords));
 
     // This adds totals of topX records to listOfWeightedCategories
     getWeightedTotals(listOfWeightedCategories, topXRecordColumns, true);
@@ -144,11 +152,11 @@ function calculateTotalWeight() {
         catDict['range_All'] = getRadioButtonSelection(`rangeAllOrNothing${categoryNumber}`);
         catDict['weight'] = weight_value;
         catDict['topXWeightedValues'] = [];
-        console.log(`document.getElementById(\`range\${categoryNumber}\`): ${document.getElementById(`range${categoryNumber}`)}`);
+        // console.log(`document.getElementById(\`range\${categoryNumber}\`): ${document.getElementById(`range${categoryNumber}`)}`);
         catDict['isTreatableAsANumber'] = !(document.getElementById(`range${categoryNumber}`).disabled);
         listOfWeightedCategories.push(catDict);
     }
-    console.log(`listOfWeightedCategories: ${JSON.stringify(listOfWeightedCategories, null, 2)}`);
+    // console.log(`listOfWeightedCategories: ${JSON.stringify(listOfWeightedCategories, null, 2)}`);
 
     dictRecordIndexAndWeightedTotal = getWeightedTotals(listOfWeightedCategories, dataByColumn, false);
     // console.log(`dictRecordIndexAndWeightedTotal: ${JSON.stringify(dictRecordIndexAndWeightedTotal, null, 2)}`);
@@ -163,8 +171,8 @@ function calculateTotalWeight() {
     // console.log(sorted2DArray);
     let count = 0;
     let topXIndicesAndTotalList = [];
-    while (count < sorted2DArray.length && topXIndicesAndTotalList.length < topXValue){
-        if (!Number.isNaN(sorted2DArray[count][1])){
+    while (count < sorted2DArray.length && topXIndicesAndTotalList.length < topXValue) {
+        if (!Number.isNaN(sorted2DArray[count][1])) {
             topXIndicesAndTotalList.push(sorted2DArray[count]);
         }
         count += 1;
@@ -207,6 +215,7 @@ function populateValuesOfCategory(selectId) {
         selectElement.options.length = 0;
     }
 
+    
     // data can't be null
     if (dataByColumn != null) {
 
@@ -228,21 +237,27 @@ function populateValuesOfCategory(selectId) {
             }
         }
 
+        // console.log(`seenValues: ${seenValues}`);
+        // seenValues.forEach(value => {
+        //     console.log(`value: ${value}`);
+        //   });
+          
 
         // instead make a list of columns that makes sense to use as a range
         // in weighting and test if the current category is in the list
-        if (allValuesAreNumbers) {
+        if (isRangeCategory.includes(category_key)) {
             disableRadioButton(false, `range${parseInt(numStr) / 2}`);
         } else {
             disableRadioButton(true, `range${parseInt(numStr) / 2}`);
         }
 
+        // console.log(`result: ${JSON.stringify(result)}`);
         let sortedByValues = structuredClone(result);
         let entries = Object.entries(sortedByValues);
         let sortedArray = entries.sort(([, a], [, b]) => a - b);
         let sortedMap = new Map(sortedArray);
         let sorted2DArray = [...sortedMap];
-
+        // console.log(`sorted2DArray: ${sorted2DArray}`);
         for (let i = 0; i < sorted2DArray.length; i++) {
             let option1 = dropDownMenuValue.append('option').text(sorted2DArray[i][1]);
             option1.attr('value', sorted2DArray[i][1]);
@@ -363,6 +378,10 @@ function addButtons() {
     calcButton.attr('style', 'margin: 0px 6px 14px 2px; box-shadow: 0px 3px 4px 0px;');
     calcButton.attr('onclick', 'buttonClicked("calculateTotal")');
     calcButton.html('Calculate Total');
+
+    let buttonAdjacentLabel = addCalcButtonContainer.append('label');
+    buttonAdjacentLabel.html('Click the "Calculate Total" button after entering a "Weight" to see charts and details.');
+    buttonAdjacentLabel.attr('style', 'opacity: 0.8')
 }
 
 // Adds another category panel with 2 selectors, 2 radio buttons, and a textfield
@@ -394,7 +413,7 @@ function addCategoryPanel() {
     let hCat = form.append('h4');
     hCat.html('Category:');
     hCat.attr('style', 'font-weight: 600;')
-    
+
     let select1 = form.append('select');
     select1.attr('id', `selDataset${categoryCount * 2}`);
     select1.attr('onchange', "optionChangedCategory(event)");
@@ -517,7 +536,7 @@ function createBarChart() {
 // Create a Correlation Chart for the Categories that have numbers
 function createCorrelationsChart() {
     let ctx = document.getElementById('correlationsChart').getContext('2d');
-    console.log('Inside correlations&&&&&&&&&&');
+    // console.log('Inside correlations&&&&&&&&&&');
     let data = [];
     let listOfCategories = [];
     let labels = [];
@@ -534,16 +553,16 @@ function createCorrelationsChart() {
         let currentCategory = listOfCategories[j];
         // Search for correct row
         for (let k = 0; k < correlationsByRow.length; k++) {
-            console.log(`correlationsByRow[k]['Column Of Category']: ${correlationsByRow[k]['Column Of Category']}`);
-            console.log(`listOfCategories[j]: ${listOfCategories[j]}`);
-            if (correlationsByRow[k]['Column Of Category'] == currentCategory) {
+            // console.log(`correlationsByRow[k]['Column Of Category']: ${correlationsByRow[k]['Column Of Category']}`);
+            // console.log(`listOfCategories[j]: ${listOfCategories[j]}`);
+            if (correlationsByRow[k]['Column Of Category'].toLowerCase() == currentCategory.toLowerCase()) {
                 let correlTableRow = correlationsByRow[k];
                 for (let m = j; m < listOfCategories.length; m++) {
                     let secondCurrentCategory = listOfCategories[m];
                     if (currentCategory == secondCurrentCategory) {
                         continue;
                     }
-                    let correlationCoefficient = correlTableRow[secondCurrentCategory];
+                    let correlationCoefficient = correlTableRow[secondCurrentCategory.replace(/ In /g, ' in ').replace(/ Of /g, ' of ').replace(/ Per /g, ' per ')];
                     // console.log(`correlTableRow[secondCurrentCategory]: ${correlTableRow[secondCurrentCategory]}`);
                     // console.log(`correlTableRow: ${JSON.stringify(correlTableRow)}`);
                     // console.log(`secondCurrentCategory: ${secondCurrentCategory}`);
@@ -554,8 +573,8 @@ function createCorrelationsChart() {
                     borderColor.push(`rgba(${(Math.abs(Math.floor((correlationCoefficient + 111) * 200))) % 256}, ${(Math.abs(Math.floor((correlationCoefficient + 222) * 203))) % 256}, ${(Math.abs(Math.floor((correlationCoefficient + 333) * 207))) % 256}, ${.6})`);
                 }
 
-                console.log(`data: ${data}`);
-                console.log(`labels: ${labels}`);
+                // console.log(`data: ${data}`);
+                // console.log(`labels: ${labels}`);
 
 
                 break;
@@ -564,10 +583,13 @@ function createCorrelationsChart() {
         }
     }
 
+    // Remove previous correlations chart if it exists
     if (correleationsCategoryChart) {
         correleationsCategoryChart.destroy();
     }
-    console.log(`correlationsByRows: ${JSON.stringify(correlationsByRow)}`)
+
+    // console.log(`correlationsByRows: ${JSON.stringify(correlationsByRow)}`)
+    // Create chart
     correleationsCategoryChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -615,10 +637,12 @@ function createDoughnutChart() {
     // console.log(`data: ${data}`);
     // console.log(`backgroundColor: ${backgroundColor}`);
 
+    // Remove previous doughnut chart
     if (doughnutChartWeightedTotals) {
         doughnutChartWeightedTotals.destroy();
     }
 
+    // Create doughnut chart
     doughnutChartWeightedTotals = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -631,6 +655,10 @@ function createDoughnutChart() {
             }]
         },
         options: {
+            title: {
+                display: true,
+                text: 'Total Weight By Category'
+            },
             cutoutPercentage: 50,
             responsive: true
         }
@@ -650,19 +678,18 @@ function createMarkers(dataRow, myMap) {
         feature['properties'] = dataRow[i];
         feature['geometry'] = {
             type: 'Point',
-            coordinates: [dataRow[i].Longitude, dataRow[i].Latitude]
+            coordinates: [parseFloat(dataRow[i].Longitude), parseFloat(dataRow[i].Latitude)]
         };
         features.push(feature);
+        // console.log(`feature: ${JSON.stringify(feature)}`);
+        // break;
     }
+
     let distributionMax;
     let distributionMin;
-    let delta;
-    let numOfColorSteps = 6;
 
-    let colors1 = getColors(numOfColorSteps, 1000, 0.6);
-
-
-
+    // Find max and min of all 'totalWeightedScore's if already calculated,
+    // otherwise find max and min of all 'Overall Rating's
     if ('totalWeightedScore' in features[0].properties) {
         distributionMax = features[0].properties['totalWeightedScore'];
         distributionMin = features[0].properties['totalWeightedScore'];
@@ -688,16 +715,6 @@ function createMarkers(dataRow, myMap) {
     }
 
 
-
-    if (distributionMax != distributionMin) {
-        if ((distributionMax - distributionMin) >= numOfColorSteps) {
-            delta = (distributionMax - distributionMin) / numOfColorSteps;
-        } else {
-            delta = 1;
-        }
-    }
-
-
     // Create a geoJSON layer to add markers to map.
     L.geoJSON(features, {
 
@@ -705,6 +722,8 @@ function createMarkers(dataRow, myMap) {
             let ranking = 0;
             let fillColor1 = "";
 
+            // Test if 'totalWeightedScore' has been calculated and use it,
+            // otherwise use 'Overall Rating'
             if ('totalWeightedScore' in feature.properties) {
                 ranking = feature.properties['totalWeightedScore'];
             } else {
@@ -712,18 +731,11 @@ function createMarkers(dataRow, myMap) {
             }
 
             let diffMaxMin = distributionMax - distributionMin;
-            if (diffMaxMin <= 5) {
-                fillColor1 = colors[Math.floor(5 - (distributionMax - ranking))];
-            } else {
-                if (ranking == distributionMax) {
-                    fillColor1 = colors[colors.length - 1];
-                } else {
-                    fillColor1 = colors[Math.floor((ranking - distributionMin) / delta)];
-                }
-            }
 
-            // To assure fillColor1 always has a color
-            if (!colors.includes(fillColor1)) {
+            // Test to assure index for colors will be between 5 and 0 inclusively
+            if (Math.floor(5 * (ranking - distributionMin) / diffMaxMin) <= 5 && Math.floor(5 * (ranking - distributionMin) / diffMaxMin) >= 0){
+                fillColor1 = colors[Math.floor(5 * (ranking - distributionMin) / diffMaxMin)];
+            } else {
                 fillColor1 = colors[0];
             }
 
@@ -739,7 +751,7 @@ function createMarkers(dataRow, myMap) {
             return L.circleMarker(latlng, markerOptions);
         },
 
-        
+
         onEachFeature: function (feature, layer) {
             let latLng = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
 
@@ -754,17 +766,9 @@ function createMarkers(dataRow, myMap) {
 
 // Removes markers on map in preparation for new ones
 function removeAllMapMarkers() {
-    console.log('removing markers');
-    myMap.eachLayer(function (layer) {
-        if (layer instanceof L.CircleMarker) {
-            myMap.removeLayer(layer);
-            console.log('removing markers');
-            return;
-        }
-    });
     myMap.remove()
     let stepLabels = ['Least', '&emsp;.', '&emsp;.', '&emsp;.', '&emsp;.', 'Greatest'];
-    createMap(topXRecords, 'Weighted Total', stepLabels);
+    createMap(topXRecords, 'Weighted Total', stepLabels, [topXRecords[0]['Latitude'], topXRecords[0]['Longitude']]);
 
 }
 
@@ -817,17 +821,22 @@ function createLegend(myMap, legendLabels, legendTitle) {
 
 
 // Create leaflet map given data a legend title and step labels for the legend
-function createMap(dataRows, legendTitle, stepLabels) {
+function createMap(dataRows, legendTitle, stepLabels, startCoordinates) {
     // console.log(`dataRows: \n${dataRows}`);
     let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     })
 
+    let zoomLevel = 4;
+
+    // Zoom out if start coordinate is not in mainland USA
+    if (startCoordinates[0] > 48 || startCoordinates[0] < 25 || startCoordinates[1] > 125){
+        zoomLevel = 3;
+    }
+
     myMap = L.map("map1", {
-        center: [
-            37, -100
-        ],
-        zoom: 4,
+        center: startCoordinates,
+        zoom: zoomLevel,
         layers: [street]
     });
 
@@ -841,7 +850,7 @@ function createMap(dataRows, legendTitle, stepLabels) {
 
 
 function getRGBAString(value, initialSeed, alpha) {
-   return `rgba(${(Math.abs(Math.floor((value + initialSeed + 333) * 200))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 444) * 203))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 555) * 207))) % 256}, ${alpha})`;
+    return `rgba(${(Math.abs(Math.floor((value + initialSeed + 333) * 200))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 444) * 203))) % 256}, ${(Math.abs(Math.floor((value + initialSeed + 555) * 207))) % 256}, ${alpha})`;
 }
 
 
@@ -852,8 +861,8 @@ function createCategoryChart() {
     // console.log('1');
     let arrOfTraces = [];
     for (let h = 0; h < listOfWeightedCategories.length; h++) {
-        console.log(`color${h}: ${getRGBAString(h, h + 390, 0.5)}`);
-        console.log(`color${h}: ${getRGBAString(h, h + 390, 0.8)}`);
+        // console.log(`color${h}: ${getRGBAString(h, h + 390, 0.5)}`);
+        // console.log(`color${h}: ${getRGBAString(h, h + 390, 0.8)}`);
         let trace = {
             type: 'bar',
             opacity: 0.6,
@@ -885,12 +894,11 @@ function createCategoryChart() {
         }
         trace['y'] = y;
         trace['text'] = text;
-        console.log(JSON.stringify(trace));
+        // console.log(JSON.stringify(trace));
         arrOfTraces.push(trace);
     }
-    console.log(JSON.stringify(arrOfTraces));
 
-
+    // console.log(JSON.stringify(arrOfTraces));
     let layout = {
         title: 'Category Weight Contribution By Provider',
         barmode: 'group',
@@ -908,48 +916,127 @@ function createCategoryChart() {
 
 
 // Importing Data *********************
-// Get Correlation data from general data for correlation charts
-d3.json(urlJSONCorrelationsByRow).then(function (correlationsData) {
-    correlationsByRow = structuredClone(correlationsData);
-});
+// Get Correlation data from general data for correlation charts (LOCAL)
+// d3.json(urlJSONCorrelationsByRow).then(function (correlationsData) {
+//     correlationsByRow = structuredClone(correlationsData);
+// });
 
-// Get retirement home data by Row (record)
-d3.json(urlJSONByRow).then(function (dataRows) {
-    dataByRow = structuredClone(dataRows);
-    console.log('Data by Row: ');
-    console.log(dataRows);
-    createMap(dataRows, 'Overall Rating', ['null', 1,2,3,4,5]);
 
-});
+// Get Correlation data by Server
+fetch('static/DatasetManipulations/correlations_df_by_record.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(correlationsData => {
+        correlationsByRow = structuredClone(correlationsData);
 
-// Get retirement home data by Column (record)
-d3.json(urlJSONByColumn).then(function (dataColumns) {
-    dataByColumn = structuredClone(dataColumns);
-    // console.log(bootstrap.Tooltip.VERSION);
+        // console.log(correlationsData);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 
-    // Quick printout-sanity-check
-    console.log('Data by Column:');
-    console.log(dataColumns);
 
-    function initialize() {
-        addCategoryPanel();
+// Get retirement home data by Row (record) (LOCAL)
+//   d3.json(urlJSONByRow).then(function (dataRows) {
+//       dataByRow = structuredClone(dataRows);
+//       console.log('Data by Row: ');
+//       console.log(dataRows);
+//       createMap(dataRows, 'Overall Rating', ['null', 1,2,3,4,5]);
 
-        let dropDownMenu = d3.select('#selDataset0');
-        let keys = Object.keys(dataColumns);
-        keys.forEach(key => {
-            // console.log(key);
-            let option1 = dropDownMenu.append('option').text(key);
-            option1.attr('value', key);
-        });
-        console.log('**************');
-        // console.log(data1['Federal Provider Number']);
+//   });
 
-        populateValuesOfCategory('selDataset0');
+// Loads the dataByRow variable using the dataByColumn Variable
+function loadDataByRow(dataColumns) {
+    dataByRow = [];
+    let listOfKeys = Object.keys(dataColumns);
+    // console.log(listOfKeys);
+    // console.log(`Object.keys(dataColumns['provider_name']).length: ${Object.keys(dataColumns['Provider Name']).length}`);
+    for (let i = 0; i < Object.keys(dataColumns['Provider Name']).length; i++) {
+        let record = {};
+        for (let j = 0; j < listOfKeys.length; j++) {
+            record[listOfKeys[j]] = dataColumns[listOfKeys[j]][i];
+        }
 
-        addButtons();
+        dataByRow.push(record);
     }
+    // console.log('data by row: ');
+    // console.log(dataByRow);
+    createMap(dataByRow, 'Overall Rating', ['null', 1,2,3,4,5], centerOfUSA);
 
-    initialize();
+}
+
+// Get retirement home data by Column (by server)
+fetch('/get_data_by_column')
+    .then(response => response.json())
+    .then(function (dataColumns) {
+        dataByColumn = structuredClone(dataColumns);
+        // console.log(bootstrap.Tooltip.VERSION);
+
+        // Quick printout-sanity-check
+        // console.log('Data by Column:');
+        // console.log(dataColumns);
+
+        function initialize() {
+            addCategoryPanel();
+
+            let dropDownMenu = d3.select('#selDataset0');
+            let keys = Object.keys(dataColumns);
+            keys.forEach(key => {
+                // console.log(key);
+                let option1 = dropDownMenu.append('option').text(key);
+                option1.attr('value', key);
+            });
+            // console.log('**************');
+            // console.log(data1['Federal Provider Number']);
+
+            populateValuesOfCategory('selDataset0');
+
+            addButtons();
+
+            loadDataByRow(dataColumns);
+        }
+
+        initialize();
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+    });
 
 
-});
+// Get retirement home data by Column (LOCAL)
+// d3.json(urlJSONByColumn).then(function (dataColumns) {
+//     dataByColumn = structuredClone(dataColumns);
+//     // console.log(bootstrap.Tooltip.VERSION);
+
+//     // Quick printout-sanity-check
+//     console.log('Data by Column:');
+//     console.log(dataColumns);
+
+//     function initialize() {
+//         addCategoryPanel();
+
+//         let dropDownMenu = d3.select('#selDataset0');
+//         let keys = Object.keys(dataColumns);
+//         keys.forEach(key => {
+//             // console.log(key);
+//             let option1 = dropDownMenu.append('option').text(key);
+//             option1.attr('value', key);
+//         });
+//         console.log('**************');
+//         // console.log(data1['Federal Provider Number']);
+
+//         populateValuesOfCategory('selDataset0');
+
+//         addButtons();
+
+//         loadDataByRow(dataColumns);
+//     }
+
+//     initialize();
+
+
+// });

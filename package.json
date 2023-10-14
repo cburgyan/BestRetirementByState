@@ -1,0 +1,18 @@
+{
+  "name": "best-retirement-app",
+  "version": "1.0.0",
+  "description": "Dashboard for retirement homes.",
+  "main": "n2odeSetUpTables.js",
+  "scripts": {
+    "test": "echo \"This is an echo statement fofo-foobar that could be replaced with a test\""
+  },
+  "keywords": [
+    "retirement"
+  ],
+  "author": "kmb",
+  "license": "ISC",
+  "dependencies": {
+    "fast-csv": "^4.3.6",
+    "pg": "^8.11.3"
+  }
+}
