@@ -226,65 +226,65 @@ def get_data_by_column():
 
 
 
-@app.route("/get_data_by_row")
-def get_data_by_row():
-    # Use SQLAlchemy's join functionality to get the combined data
-    results = (
-        db.session.query(Business, Zipcode, Performance)
-        .join(Zipcode, Business.provider_zip_code == Zipcode.provider_zip_code)
-        .join(Performance, Business.performance_id == Performance.performance_id)
-        .all()
-    )
+# @app.route("/get_data_by_row")
+# def get_data_by_row():
+#     # Use SQLAlchemy's join functionality to get the combined data
+#     results = (
+#         db.session.query(Business, Zipcode, Performance)
+#         .join(Zipcode, Business.provider_zip_code == Zipcode.provider_zip_code)
+#         .join(Performance, Business.performance_id == Performance.performance_id)
+#         .all()
+#     )
 
-    # Convert results to a list of dictionaries to be JSON serializable
-    data = []
-    for business, zipcode, performance in results:
-        item = {
-            # Business fields
-            "federal_provider_number": business.federal_provider_number,
-            "provider_name": business.provider_name,
-            "provider_city": business.provider_city,
-            "provider_county_name": business.provider_county_name,
-            "ownership_type": business.ownership_type,
-            "number_of_certified_beds": business.number_of_certified_beds,
-            "number_of_residents_in_certified_beds": business.number_of_residents_in_certified_beds,
-            "provider_type": business.provider_type,
-            "provider_resides_in_hospital": business.provider_resides_in_hospital,
-            "automatic_sprinkler_systems_in_all_required_areas": business.automatic_sprinkler_systems_in_all_required_areas,
-            "location": business.location,
-            "processing_date": business.processing_date.strftime("%Y-%m-%d")
-            if business.processing_date
-            else None,  # format date as string
-            "latitude": float(business.latitude),
-            "longitude": float(business.longitude),
-            "adjusted_total_nurse_staffing_hours_per_resident_per_day": float(
-                business.adjusted_total_nurse_staffing_hours_per_resident_per_day
-            ),
+#     # Convert results to a list of dictionaries to be JSON serializable
+#     data = []
+#     for business, zipcode, performance in results:
+#         item = {
+#             # Business fields
+#             "federal_provider_number": business.federal_provider_number,
+#             "provider_name": business.provider_name,
+#             "provider_city": business.provider_city,
+#             "provider_county_name": business.provider_county_name,
+#             "ownership_type": business.ownership_type,
+#             "number_of_certified_beds": business.number_of_certified_beds,
+#             "number_of_residents_in_certified_beds": business.number_of_residents_in_certified_beds,
+#             "provider_type": business.provider_type,
+#             "provider_resides_in_hospital": business.provider_resides_in_hospital,
+#             "automatic_sprinkler_systems_in_all_required_areas": business.automatic_sprinkler_systems_in_all_required_areas,
+#             "location": business.location,
+#             "processing_date": business.processing_date.strftime("%Y-%m-%d")
+#             if business.processing_date
+#             else None,  # format date as string
+#             "latitude": float(business.latitude),
+#             "longitude": float(business.longitude),
+#             "adjusted_total_nurse_staffing_hours_per_resident_per_day": float(
+#                 business.adjusted_total_nurse_staffing_hours_per_resident_per_day
+#             ),
 
-            # Zipcode fields
-            "provider_state": zipcode.provider_state,
-            "provider_zip_code": zipcode.provider_zip_code,
+#             # Zipcode fields
+#             "provider_state": zipcode.provider_state,
+#             "provider_zip_code": zipcode.provider_zip_code,
 
-            # Performance fields
-            "most_recent_health_inspection_more_than_2_years_ago": performance.most_recent_health_inspection_more_than_2_years_ago,
-            "overall_rating": float(performance.overall_rating),
-            "health_inspection_rating": float(performance.health_inspection_rating),
-            "staffing_rating": float(performance.staffing_rating),
-            "rn_staffing_rating": float(performance.rn_staffing_rating),
-            "total_weighted_health_survey_score": float(
-                performance.total_weighted_health_survey_score
-            ),
-            "number_of_facility_reported_incidents": performance.number_of_facility_reported_incidents,
-            "number_of_substantiated_complaints": performance.number_of_substantiated_complaints,
-            "number_of_fines": performance.number_of_fines,
-            "total_amount_of_fines_in_dollars": performance.total_amount_of_fines_in_dollars,
-            "number_of_payment_denials": performance.number_of_payment_denials,
-            "total_number_of_penalties": performance.total_number_of_penalties,
-        }
+#             # Performance fields
+#             "most_recent_health_inspection_more_than_2_years_ago": performance.most_recent_health_inspection_more_than_2_years_ago,
+#             "overall_rating": float(performance.overall_rating),
+#             "health_inspection_rating": float(performance.health_inspection_rating),
+#             "staffing_rating": float(performance.staffing_rating),
+#             "rn_staffing_rating": float(performance.rn_staffing_rating),
+#             "total_weighted_health_survey_score": float(
+#                 performance.total_weighted_health_survey_score
+#             ),
+#             "number_of_facility_reported_incidents": performance.number_of_facility_reported_incidents,
+#             "number_of_substantiated_complaints": performance.number_of_substantiated_complaints,
+#             "number_of_fines": performance.number_of_fines,
+#             "total_amount_of_fines_in_dollars": performance.total_amount_of_fines_in_dollars,
+#             "number_of_payment_denials": performance.number_of_payment_denials,
+#             "total_number_of_penalties": performance.total_number_of_penalties,
+#         }
 
-        data.append(item)
+#         data.append(item)
 
-    return jsonify(data)
+#     return jsonify(data)
 
 # Route for nursing home with 'Overall Rating' equal to 5 in json form
 @app.route('/bestNS')
